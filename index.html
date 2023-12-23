@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #35139B, #B93DA9); /* Purple gradient background */
+            color: #fff; /* White text color */
+            overflow: auto; /* Enable scrolling */
+        }
+
+        header, section {
+            border-radius: 10px;
+            margin: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+
+            background: none;
+            box-shadow: none;
+        }
+
+        .logo {
+            display: flex;
+
+        }
+
+        .logo img {
+            max-height: 50px;
+            width: auto;
+            margin-right: 10px;
+        }
+
+        .site-name {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 140px;
+        }
+
+        .big-title {
+            font-size: 42px;
+            font-weight: bold;
+            margin-bottom: 40px;
+        }
+
+        .small-text {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .header-text {
+            width: 50%;
+            text-align: left; /* Center align the text in the left column */
+        }
+
+        .header-text img {
+            width: 40%; /* Adjusted image size to be 80% of the column width */
+            height: auto;
+            display: block;
+            margin: 0 auto; /* Center align the image */
+        }
+
+        nav {
+            display: none; /* Hide the navigation */
+        }
+
+        section {
+            color: #fff; /* White text color for chatbot cards */
+            background: none;
+        }
+
+        .chatbot-list {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .chatbot-card {
+            width: 70%;
+            margin: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: left;
+            transition: transform 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fff; 
+            color: #35139B; /* Purple text color on hover */
+        }
+
+        .chatbot-card i {
+            font-size: 24px;
+            margin-left: 20px;
+            color: #fff; /* White icon color */
+        }
+
+        .chatbot-card:hover {
+            transform: scale(1.05);
+            background: linear-gradient(135deg, #35139B, #B93DA9);
+            color: #fff; /* Purple text color on hover */
+        }
+
+        .start-learning-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background for button */
+            border-radius: 15px;
+            text-decoration: none;
+            color: #333; /* Dark gray text color for button */
+            font-size: 18px;
+            transition: background-color 0.3s ease;
+            animation: bounceUpDown 2s infinite;
+        }
+
+        @keyframes bounceUpDown {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-20px);
+            }
+            60% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .start-learning-btn:hover {
+            background-color: rgba(255, 255, 255, 1); /* Fully opaque white background on hover for button */
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            color: #fff;
+            background: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="header-content">
+            <div class="header-text">
+                <div class="logo">
+                    <div class="site-name">MORAL</div>
+                </div>
+                <div class="big-title">Moroccan Oriented Responsive AI Learning</div>
+                <div class="small-text">About us</div>
+                <div class="small-text">Donate</div>
+                <div class="small-text">Contact us</div>
+                    <br>
+                    <br>
+                <div class="start-learning-btn"><a href="#chatbot-list">Start learning <i class="material-icons" style="font-size: 12px;">arrow_downward</i></a></div>
+            </div>
+            <div class="header-text">
+                <img src="https://i.ibb.co/KjtDgwz/Picture2.png" alt="Header Image" style="max-width: 100%; height: auto;">
+            </div>
+        </div>
+    </header>
+
+    <section id="chatbot-list">
+        <div class="chatbot-list">
+            <div class="chatbot-card">
+                <div>
+                    <h3>Business Negotiation</h3>
+                    <p>Simulez des négociations commerciales pour développer vos compétences en négociation.</p>
+                </div>
+                <i class="material-icons">business</i>
+            </div>
+            <div class="chatbot-card">
+                <div>
+                    <h3>General Argumentation</h3>
+                    <p>Pratiquez l'argumentation générale pour renforcer vos compétences de communication.</p>
+                </div>
+                <i class="material-icons">question_answer</i>
+            </div>
+            <div class="chatbot-card">
+                <div>
+                    <h3>Business English Email Writing</h3>
+                    <p>Améliorez vos compétences en rédaction d'e-mails commerciaux en anglais.</p>
+                </div>
+                <i class="material-icons">mail</i>
+            </div>
+            <div class="chatbot-card">
+                <div>
+                    <h3>Business English Formal Discussion</h3>
+                    <p>Participez à des discussions formelles en anglais pour perfectionner vos compétences.</p>
+                </div>
+                <i class="material-icons">chat_bubble_outline</i>
+            </div>
+            <div class="chatbot-card">
+                <div>
+                    <h3>Advertisement Agency</h3>
+                    <p>Explorez des scénarios de discussion pour le secteur de la publicité et du marketing.</p>
+                </div>
+                <i class="material-icons">adb</i>
+            </div>
+            <div class="chatbot-card">
+                <div>
+                    <h3>Human Conflict Solving</h3>
+                    <p>Développez vos compétences en résolution de conflits à travers des simulations de discussions.</p>
+                </div>
+                <i class="material-icons">healing</i>
+            </div>
+            <div class="chatbot-card">
+                <div>
+                    <h3>Job Interview</h3>
+                    <p>Préparez-vous aux entretiens d'embauche en simulant des conversations liées à l'emploi.</p>
+                </div>
+                <i class="material-icons">work</i>
+            </div>
+        </div>
+    </section>
+
+</body>
+
+</html>
