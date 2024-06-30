@@ -3,131 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Business Meeting Simulation</title>
+    <title>Business Negotiation Simulation Chatbot</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f4f4f4;
-        }
-        #chat-box {
-            width: 100%;
-            max-width: 800px;
-            margin: 20px auto;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        #messages {
-            list-style-type: none;
-            padding: 0;
-            height: 400px;
-            overflow-y: scroll;
-            border-bottom: 1px solid #ddd;
-            margin-bottom: 10px;
-        }
-        #messages li {
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-        }
-        .client {
-            background-color: #e0f7fa;
-            text-align: left;
-        }
-        .salesman {
-            background-color: #fff9c4;
-            text-align: right;
-        }
-        #input-box {
-            display: flex;
-        }
-        #input-box input {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            margin-right: 10px;
-        }
-        #input-box button {
-            padding: 10px 20px;
-            border: none;
-            background-color: #0288d1;
-            color: #fff;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        #input-box button:hover {
-            background-color: #0277bd;
+        .chat-message {
+            max-width: 70%;
         }
     </style>
 </head>
-<body>
-    <div id="chat-box">
-        <ul id="messages"></ul>
-        <div id="input-box">
-            <input type="text" id="user-input" placeholder="Type your message here...">
-            <button onclick="sendMessage()">Send</button>
+<body class="bg-gray-100 h-screen flex flex-col">
+    <div class="container mx-auto p-4 flex-grow flex flex-col">
+        <h1 class="text-2xl font-bold mb-4">Business Negotiation Simulation</h1>
+        <div id="chat-container" class="bg-white p-4 rounded-lg shadow-md flex-grow overflow-y-auto mb-4">
+            <!-- Chat messages will be displayed here -->
+        </div>
+        <div class="flex">
+            <input type="text" id="user-input" class="flex-grow border rounded-l-lg p-2" placeholder="Type your message...">
+            <button id="send-btn" class="bg-blue-500 text-white px-4 py-2 rounded-r-lg">Send</button>
         </div>
     </div>
 
     <script>
-        const apiKey = "AIzaSyCjCTUupbc55S477Cr0Eb78H8ETz2pe4_U";
+        const API_KEY = 'AIzaSyCjCTUupbc55S477Cr0Eb78H8ETz2pe4_U';
+        const API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
 
-        function sendMessage() {
-            const userInput = document.getElementById('user-input').value;
-            if (!userInput) return;
+        const chatContainer = document.getElementById('chat-container');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
 
-            const messages = document.getElementById('messages');
-            const newMessage = document.createElement('li');
-            newMessage.className = 'salesman';
-            newMessage.textContent = userInput;
-            messages.appendChild(newMessage);
-            document.getElementById('user-input').value = '';
+        let conversationHistory = [];
 
-            fetchResponse(userInput);
-        }
+        const systemPrompt = `You are a Moroccan business owner participating in a business meeting simulation to practice negotiation skills with salesmen. As the AI playing the role of a business client, your objective is to create a challenging scenario where you define the name of your company, the industry it belongs to, and the product you are looking to purchase according to the industry and needs of your company. Your aim is to present logical and strong arguments against the product and its price, always expressed in dirhams. Throughout the conversation, it is crucial to stay in character and adopt a strict tone if the salesman tries to divert the discussion or introduce unrelated subjects, remind them that such behavior is inappropriate for a business meeting and reflects poorly on their professionalism and the company they represent. In your first message, provide the context for the simulation and immerse yourself in the role without revealing that it is a simulation or that you are an AI. Avoid defining yourself as an AI and discourage the salesman from doing so as well. If the salesman suggests unreasonably low prices, or unreasonable products be suspicious of their offer. Remember, you should respond as if you were in a verbal discussion, not a written one. Do not include email-like messages with greetings, body, closing, and signature. And try to favor short and relevant messages.`;
 
-        function fetchResponse(userMessage) {
-            const prompt = `
-            You are a Moroccan business owner participating in a business meeting simulation to practice negotiation skills with salesmen. 
-            As the AI playing the role of a business client, your objective is to create a challenging scenario where you define the name of 
-            your company, the industry it belongs to, and the product you are looking to purchase according to the industry and needs of 
-            your company. Your aim is to present logical and strong arguments against the product and its price, always expressed in dirhams. 
-            Throughout the conversation, it is crucial to stay in character and adopt a strict tone if the salesman tries to divert the 
-            discussion or introduce unrelated subjects, remind them that such behavior is inappropriate for a business meeting and reflects 
-            poorly on their professionalism and the company they represent. In your first message, provide the context for the simulation 
-            and immerse yourself in the role without revealing that it is a simulation or that you are an AI. Avoid defining yourself as an 
-            AI and discourage the salesman from doing so as well. If the salesman suggests unreasonably low prices, or unreasonable products 
-            be suspicious of their offer. Remember, you should respond as if you were in a verbal discussion, not a written one. 
-            Do not include email-like messages with greetings, body, closing, and signature. And try to favor short and relevant messages.
-            
-            Client: ${userMessage}
-            `;
+        conversationHistory.push({ role: "system", parts: [{ text: systemPrompt }] });
 
-            fetch('https://gemini.api.com/v1/chat', {
+        async function sendMessage() {
+            const userMessage = userInput.value.trim();
+            if (userMessage === '') return;
+
+            addMessageToChat('user', userMessage);
+            userInput.value = '';
+
+            conversationHistory.push({ role: "user", parts: [{ text: userMessage }] });
+
+            const response = await fetch(`${API_URL}?key=${API_KEY}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${apiKey}`
                 },
-                body: JSON.stringify({ prompt: prompt })
-            })
-            .then(response => response.json())
-            .then(data => {
-                const messages = document.getElementById('messages');
-                const newMessage = document.createElement('li');
-                newMessage.className = 'client';
-                newMessage.textContent = data.response;
-                messages.appendChild(newMessage);
-                messages.scrollTop = messages.scrollHeight;
-            })
-            .catch(error => {
-                console.error('Error:', error);
+                body: JSON.stringify({
+                    contents: conversationHistory,
+                    generationConfig: {
+                        temperature: 0.9,
+                        topK: 1,
+                        topP: 1,
+                        maxOutputTokens: 2048,
+                        stopSequences: []
+                    },
+                    safetySettings: [
+                        {
+                            category: "HARM_CATEGORY_HARASSMENT",
+                            threshold: "BLOCK_MEDIUM_AND_ABOVE"
+                        },
+                        {
+                            category: "HARM_CATEGORY_HATE_SPEECH",
+                            threshold: "BLOCK_MEDIUM_AND_ABOVE"
+                        },
+                        {
+                            category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+                            threshold: "BLOCK_MEDIUM_AND_ABOVE"
+                        },
+                        {
+                            category: "HARM_CATEGORY_DANGEROUS_CONTENT",
+                            threshold: "BLOCK_MEDIUM_AND_ABOVE"
+                        }
+                    ]
+                })
             });
+
+            const data = await response.json();
+            const aiMessage = data.candidates[0].content.parts[0].text;
+
+            addMessageToChat('ai', aiMessage);
+            conversationHistory.push({ role: "model", parts: [{ text: aiMessage }] });
         }
+
+        function addMessageToChat(sender, message) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('mb-2', 'p-2', 'rounded', 'chat-message');
+            
+            if (sender === 'user') {
+                messageElement.classList.add('ml-auto', 'bg-blue-100');
+            } else {
+                messageElement.classList.add('mr-auto', 'bg-gray-100');
+            }
+            
+            messageElement.textContent = message;
+            chatContainer.appendChild(messageElement);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        sendBtn.addEventListener('click', sendMessage);
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Initial AI message to set the scene
+        sendMessage();
     </script>
 </body>
 </html>
