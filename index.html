@@ -64,7 +64,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background: linear-gradient(45deg, #614385, #516395, #516395, #614385);
+            background: linear-gradient(45deg, #614385, #516395); /* Updated gradient colors */
             z-index: 9999;
             animation: gradientBG 15s ease infinite;
         }
@@ -116,6 +116,12 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
                 </svg>
             </button>
+            <!-- Speaker icon -->
+            <button id="listen-btn" class="action-btn text-gray-500 ml-2" title="Écouter le message">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 4v16m8-16v16m-3-5v6H8v-6m8 0l5-3-5-3z" />
+                </svg>
+            </button>
         </div>
         <div id="error-message" class="text-center mt-2"></div>
     </div>
@@ -131,17 +137,14 @@
         const errorMessage = document.getElementById('error-message');
         const splashScreen = document.getElementById('splash-screen');
         const moralText = document.getElementById('moral-text');
+        const listenBtn = document.getElementById('listen-btn'); // Added listen button reference
 
         let conversationHistory = [];
-
-        const systemPrompt = `Vous êtes un propriétaire d'entreprise marocain participant à une simulation de réunion d'affaires pour pratiquer les compétences de négociation avec des commerciaux. En tant qu'IA jouant le rôle d'un client professionnel, votre objectif est de créer un scénario stimulant où vous définissez le nom de votre entreprise, le secteur auquel elle appartient et le produit que vous cherchez à acheter en fonction du secteur et des besoins de votre entreprise. Votre but est de présenter des arguments logiques et solides contre le produit et son prix, toujours exprimés en dirhams. Tout au long de la conversation, il est crucial de rester dans le personnage et d'adopter un ton strict si le vendeur essaie de détourner la discussion ou d'introduire des sujets sans rapport, en lui rappelant qu'un tel comportement est inapproprié pour une réunion d'affaires et reflète mal sur son professionnalisme et l'entreprise qu'il représente. Dans votre premier message, fournissez le contexte de la simulation et plongez-vous dans le rôle sans révéler qu'il s'agit d'une simulation ou que vous êtes une IA. Évitez de vous définir comme une IA et découragez le vendeur de le faire aussi. Si le vendeur suggère des prix déraisonnablement bas ou des produits déraisonnables, soyez méfiant de son offre. Rappelez-vous, vous devez répondre comme si vous étiez dans une discussion verbale, pas écrite. N'incluez pas de messages de type e-mail avec des salutations, un corps, une clôture et une signature. Et essayez de favoriser des messages courts et pertinents. IMPORTANT: Répondez toujours en français, jamais en anglais.`;
-
-        conversationHistory.push({ role: "user", parts: [{ text: systemPrompt }] });
 
         function animateMoralText() {
             const text = "MORAL";
             moralText.innerHTML = text.split('').map((letter, index) => 
-                `<span class="letter" style="animation-delay: ${index * 0.1}s">${letter}</span>`
+                <span class="letter" style="animation-delay: ${index * 0.1}s">${letter}</span>
             ).join('');
         }
 
@@ -168,7 +171,7 @@
             conversationHistory.push({ role: "user", parts: [{ text: userMessage }] });
 
             try {
-                const response = await fetch(`${API_URL}?key=${API_KEY}`, {
+                const response = await fetch(${API_URL}?key=${API_KEY}, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -204,7 +207,7 @@
                 });
 
                 if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                    throw new Error(HTTP error! status: ${response.status});
                 }
 
                 const data = await response.json();
@@ -219,7 +222,7 @@
                 }
             } catch (error) {
                 console.error('Error:', error);
-                errorMessage.textContent = `Erreur: ${error.message}. Veuillez vérifier la console pour plus de détails.`;
+                errorMessage.textContent = Erreur: ${error.message}. Veuillez vérifier la console pour plus de détails.;
             }
         }
 
@@ -234,7 +237,7 @@
                 // Add listen button for AI messages
                 const listenBtn = document.createElement('button');
                 listenBtn.innerHTML = '🔊';
-                listenBtn.className = 'ml-2 text-sm text-gray-500';
+                listenBtn.className = 'action-btn text-sm text-gray-500 ml-2';
                 listenBtn.onclick = () => speak(message);
                 messageElement.appendChild(document.createTextNode(message));
                 messageElement.appendChild(listenBtn);
@@ -279,4 +282,4 @@
         sendMessage();
     </script>
 </body>
-</html> 
+</html>
