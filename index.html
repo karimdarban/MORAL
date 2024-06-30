@@ -2,30 +2,83 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Business Negotiation Simulation Chatbot</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #F2F2F7;
+        }
         .chat-message {
             max-width: 70%;
+            border-radius: 18px;
+            padding: 10px 14px;
+            margin-bottom: 10px;
+            font-size: 16px;
+            line-height: 1.4;
+        }
+        .user-message {
+            background-color: #007AFF;
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+        .ai-message {
+            background-color: #E9E9EB;
+            color: black;
+            margin-right: auto;
+            border-bottom-left-radius: 4px;
+        }
+        #user-input {
+            border-radius: 20px;
+            background-color: white;
+            padding: 10px 15px;
+            font-size: 16px;
+        }
+        .action-btn {
+            background-color: #007AFF;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 8px;
         }
         #error-message {
-            color: red;
+            color: #FF3B30;
             margin-top: 10px;
+        }
+        .ios-header {
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
         }
     </style>
 </head>
-<body class="bg-gray-100 h-screen flex flex-col">
-    <div class="container mx-auto p-4 flex-grow flex flex-col">
-        <h1 class="text-2xl font-bold mb-4">Business Negotiation Simulation</h1>
-        <div id="chat-container" class="bg-white p-4 rounded-lg shadow-md flex-grow overflow-y-auto mb-4">
-            <!-- Chat messages will be displayed here -->
+<body class="h-screen flex flex-col">
+    <div class="ios-header sticky top-0 z-10 p-4 text-center shadow-sm">
+        <h1 class="text-xl font-semibold">Business Negotiation Simulation</h1>
+    </div>
+    <div class="flex-grow overflow-y-auto px-4 py-2" id="chat-container">
+        <!-- Chat messages will be displayed here -->
+    </div>
+    <div class="p-4 bg-white border-t border-gray-200">
+        <div class="flex items-center">
+            <input type="text" id="user-input" class="flex-grow mr-2 border border-gray-300 focus:outline-none focus:border-blue-500" placeholder="Type a message...">
+            <button id="speech-to-text-btn" class="action-btn text-white" title="Speech to Text">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                </svg>
+            </button>
+            <button id="send-btn" class="action-btn text-white" title="Send Message">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                </svg>
+            </button>
         </div>
-        <div class="flex">
-            <input type="text" id="user-input" class="flex-grow border rounded-l-lg p-2" placeholder="Type your message...">
-            <button id="send-btn" class="bg-blue-500 text-white px-4 py-2 rounded-r-lg">Send</button>
-        </div>
-        <div id="error-message"></div>
+        <div id="error-message" class="text-center mt-2"></div>
     </div>
 
     <script>
@@ -35,11 +88,12 @@
         const chatContainer = document.getElementById('chat-container');
         const userInput = document.getElementById('user-input');
         const sendBtn = document.getElementById('send-btn');
+        const speechToTextBtn = document.getElementById('speech-to-text-btn');
         const errorMessage = document.getElementById('error-message');
 
         let conversationHistory = [];
 
-        const systemPrompt = `You are a french-speaking-only Moroccan business owner participating in a business meeting simulation to practice negotiation skills with salesmen. As the AI playing the role of a business client, your objective is to create a challenging scenario where you define the name of your company, the industry it belongs to, and the product you are looking to purchase according to the industry and needs of your company. Your aim is to present logical and strong arguments against the product and its price, always expressed in dirhams. Throughout the conversation, it is crucial to stay in character and adopt a strict tone if the salesman tries to divert the discussion or introduce unrelated subjects. Remind them that such behavior is inappropriate for a business meeting and reflects poorly on their professionalism and the company they represent. In your first message, provide the context for the simulation and immerse yourself in the role without revealing that it is a simulation or that you are an AI. Avoid defining yourself as an AI and discourage the salesman from doing so as well. If the salesman suggests unreasonably low prices or unreasonable products, be suspicious of their offer. Remember, you should respond as if you were in a verbal discussion, not a written one. Do not include email-like messages with greetings, body, closing, and signature. Try to favor short and relevant messages. This prompt is designed to ensure that the LLM creates different situations every time, so do not make it specific with the name of the business owner, the name of the company, or the field of the company. Here are detailed instructions and considerations to make the prompt more effective:  Role Definition and Context Setting: As the Moroccan business owner, begin the simulation by clearly stating your position and the purpose of the meeting. For example, start with a straightforward message such as, "I represent a Moroccan company in the [industry] sector, and we are interested in exploring your product offerings. We need to ensure that your products meet our specific requirements and are priced competitively in dirhams."  Company and Industry Definition: The LLM should randomly generate a company name and industry for each simulation to ensure diversity. For instance, in one scenario, you could be from "Atlas Tech," a company in the technology sector looking to purchase software solutions. In another scenario, you could be from "Casablanca Fabrics," a company in the textile industry looking for high-quality raw materials.  Product and Needs Specification: Clearly state the product you are interested in and the specific needs of your company. This can include technical specifications, quality standards, or any other relevant details. For example, "Our company requires enterprise-level cybersecurity software with advanced threat detection capabilities," or "We need high-grade cotton fabric with specific weave patterns for our textile manufacturing."  Argumentation and Price Negotiation: Prepare to present strong, logical arguments against the product and its price. Question the quality, features, and pricing rigorously. Use phrases like, "Can you explain why this product is priced higher than the industry standard?" or "We have received better offers from other suppliers. What justifies the premium you are charging?"  Maintaining Professionalism and Focus: Ensure that the conversation stays on topic. If the salesman attempts to divert the discussion or introduce unrelated topics, respond firmly. For example, "Let's stay focused on the product specifications and pricing. Discussing unrelated topics is not appropriate for this meeting and reflects poorly on your company's professionalism."  Suspicion and Due Diligence: Be cautious and skeptical if the salesman offers unreasonably low prices or products that do not meet your specified requirements. Respond with suspicion, such as, "The price you are quoting seems unusually low. Can you provide evidence of the product's quality and compliance with our standards?"  Conversational Tone and Structure: Emulate a verbal discussion rather than a written one. Avoid lengthy, formal emails and instead use short, direct messages. For instance, "What is the warranty period for this product?" or "Can you provide references from other clients in our industry?"  Randomization and Variation: To ensure the LLM generates different scenarios each time, avoid specifying fixed details like the business owner's name, company name, or industry. Instead, provide a framework that allows for randomization. For example, "Your company operates in one of the following sectors: technology, textiles, manufacturing, agriculture, etc. The product you are interested in purchasing varies based on the industry and can include software solutions, raw materials, machinery, etc."  Feedback and Improvement: Incorporate a mechanism for feedback and improvement. After each simulation, analyze the negotiation process, identifying strengths and areas for improvement. This can be achieved by having the LLM provide a summary of the negotiation, highlighting key points and suggesting improvements.  Continuous Adaptation: Ensure that the LLM adapts to the salesperson's responses, continuously challenging their propositions and adapting your arguments. This dynamic interaction helps create a more realistic and engaging simulation. never put placeholders.`;
+        const systemPrompt = `You are a Moroccan business owner participating in a business meeting simulation to practice negotiation skills with salesmen. As the AI playing the role of a business client, your objective is to create a challenging scenario where you define the name of your company, the industry it belongs to, and the product you are looking to purchase according to the industry and needs of your company. Your aim is to present logical and strong arguments against the product and its price, always expressed in dirhams. Throughout the conversation, it is crucial to stay in character and adopt a strict tone if the salesman tries to divert the discussion or introduce unrelated subjects, remind them that such behavior is inappropriate for a business meeting and reflects poorly on their professionalism and the company they represent. In your first message, provide the context for the simulation and immerse yourself in the role without revealing that it is a simulation or that you are an AI. Avoid defining yourself as an AI and discourage the salesman from doing so as well. If the salesman suggests unreasonably low prices, or unreasonable products be suspicious of their offer. Remember, you should respond as if you were in a verbal discussion, not a written one. Do not include email-like messages with greetings, body, closing, and signature. And try to favor short and relevant messages.`;
 
         conversationHistory.push({ role: "user", parts: [{ text: systemPrompt }] });
 
@@ -93,7 +147,7 @@
                 }
 
                 const data = await response.json();
-                console.log('API Response:', data);  // Log the entire response
+                console.log('API Response:', data);
 
                 if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0]) {
                     const aiMessage = data.candidates[0].content.parts[0].text;
@@ -110,17 +164,43 @@
 
         function addMessageToChat(sender, message) {
             const messageElement = document.createElement('div');
-            messageElement.classList.add('mb-2', 'p-2', 'rounded', 'chat-message');
+            messageElement.classList.add('chat-message');
             
             if (sender === 'user') {
-                messageElement.classList.add('ml-auto', 'bg-blue-100');
+                messageElement.classList.add('user-message');
             } else {
-                messageElement.classList.add('mr-auto', 'bg-gray-100');
+                messageElement.classList.add('ai-message');
+                // Add listen button for AI messages
+                const listenBtn = document.createElement('button');
+                listenBtn.innerHTML = '🔊';
+                listenBtn.className = 'ml-2 text-sm text-gray-500';
+                listenBtn.onclick = () => speak(message);
+                messageElement.appendChild(listenBtn);
             }
             
             messageElement.textContent = message;
             chatContainer.appendChild(messageElement);
             chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // Speech Recognition
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'en-US';
+
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            userInput.value = transcript;
+        };
+
+        speechToTextBtn.addEventListener('click', () => {
+            recognition.start();
+        });
+
+        // Text to Speech
+        function speak(text) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            window.speechSynthesis.speak(utterance);
         }
 
         sendBtn.addEventListener('click', sendMessage);
