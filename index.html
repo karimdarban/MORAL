@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Business Negotiation Simulation Chatbot</title>
+    <title>Simulation de Négociation Commerciale</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
@@ -55,24 +55,63 @@
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
         }
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(45deg, #FF9500, #FF2D55, #5856D6, #007AFF);
+            z-index: 9999;
+            animation: gradientBG 15s ease infinite;
+        }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        #moral-text {
+            font-size: 48px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        .letter {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(50px);
+            animation: fadeInUp 0.5s forwards;
+        }
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
     </style>
 </head>
 <body class="h-screen flex flex-col">
+    <div id="splash-screen">
+        <div id="moral-text"></div>
+    </div>
     <div class="ios-header sticky top-0 z-10 p-4 text-center shadow-sm">
-        <h1 class="text-xl font-semibold">Business Negotiation Simulation</h1>
+        <h1 class="text-xl font-semibold">Simulation de Négociation Commerciale</h1>
     </div>
     <div class="flex-grow overflow-y-auto px-4 py-2" id="chat-container">
         <!-- Chat messages will be displayed here -->
     </div>
     <div class="p-4 bg-white border-t border-gray-200">
         <div class="flex items-center">
-            <input type="text" id="user-input" class="flex-grow mr-2 border border-gray-300 focus:outline-none focus:border-blue-500" placeholder="Type a message...">
-            <button id="speech-to-text-btn" class="action-btn text-white" title="Speech to Text">
+            <input type="text" id="user-input" class="flex-grow mr-2 border border-gray-300 focus:outline-none focus:border-blue-500" placeholder="Tapez un message...">
+            <button id="speech-to-text-btn" class="action-btn text-white" title="Parler pour saisir">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
                 </svg>
             </button>
-            <button id="send-btn" class="action-btn text-white" title="Send Message">
+            <button id="send-btn" class="action-btn text-white" title="Envoyer le message">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
                 </svg>
@@ -90,12 +129,34 @@
         const sendBtn = document.getElementById('send-btn');
         const speechToTextBtn = document.getElementById('speech-to-text-btn');
         const errorMessage = document.getElementById('error-message');
+        const splashScreen = document.getElementById('splash-screen');
+        const moralText = document.getElementById('moral-text');
 
         let conversationHistory = [];
 
-        const systemPrompt = `You are a Moroccan business owner participating in a business meeting simulation to practice negotiation skills with salesmen. As the AI playing the role of a business client, your objective is to create a challenging scenario where you define the name of your company, the industry it belongs to, and the product you are looking to purchase according to the industry and needs of your company. Your aim is to present logical and strong arguments against the product and its price, always expressed in dirhams. Throughout the conversation, it is crucial to stay in character and adopt a strict tone if the salesman tries to divert the discussion or introduce unrelated subjects, remind them that such behavior is inappropriate for a business meeting and reflects poorly on their professionalism and the company they represent. In your first message, provide the context for the simulation and immerse yourself in the role without revealing that it is a simulation or that you are an AI. Avoid defining yourself as an AI and discourage the salesman from doing so as well. If the salesman suggests unreasonably low prices, or unreasonable products be suspicious of their offer. Remember, you should respond as if you were in a verbal discussion, not a written one. Do not include email-like messages with greetings, body, closing, and signature. And try to favor short and relevant messages.`;
+        const systemPrompt = `Vous êtes un propriétaire d'entreprise marocain participant à une simulation de réunion d'affaires pour pratiquer les compétences de négociation avec des commerciaux. En tant qu'IA jouant le rôle d'un client professionnel, votre objectif est de créer un scénario stimulant où vous définissez le nom de votre entreprise, le secteur auquel elle appartient et le produit que vous cherchez à acheter en fonction du secteur et des besoins de votre entreprise. Votre but est de présenter des arguments logiques et solides contre le produit et son prix, toujours exprimés en dirhams. Tout au long de la conversation, il est crucial de rester dans le personnage et d'adopter un ton strict si le vendeur essaie de détourner la discussion ou d'introduire des sujets sans rapport, en lui rappelant qu'un tel comportement est inapproprié pour une réunion d'affaires et reflète mal sur son professionnalisme et l'entreprise qu'il représente. Dans votre premier message, fournissez le contexte de la simulation et plongez-vous dans le rôle sans révéler qu'il s'agit d'une simulation ou que vous êtes une IA. Évitez de vous définir comme une IA et découragez le vendeur de le faire aussi. Si le vendeur suggère des prix déraisonnablement bas ou des produits déraisonnables, soyez méfiant de son offre. Rappelez-vous, vous devez répondre comme si vous étiez dans une discussion verbale, pas écrite. N'incluez pas de messages de type e-mail avec des salutations, un corps, une clôture et une signature. Et essayez de favoriser des messages courts et pertinents. IMPORTANT: Répondez toujours en français, jamais en anglais.`;
 
         conversationHistory.push({ role: "user", parts: [{ text: systemPrompt }] });
+
+        function animateMoralText() {
+            const text = "MORAL";
+            moralText.innerHTML = text.split('').map((letter, index) => 
+                `<span class="letter" style="animation-delay: ${index * 0.1}s">${letter}</span>`
+            ).join('');
+        }
+
+        function hideSplashScreen() {
+            splashScreen.style.opacity = '0';
+            splashScreen.style.transition = 'opacity 0.5s ease-out';
+            setTimeout(() => {
+                splashScreen.style.display = 'none';
+            }, 500);
+        }
+
+        window.addEventListener('load', () => {
+            animateMoralText();
+            setTimeout(hideSplashScreen, 2000);
+        });
 
         async function sendMessage() {
             const userMessage = userInput.value.trim();
@@ -158,7 +219,7 @@
                 }
             } catch (error) {
                 console.error('Error:', error);
-                errorMessage.textContent = `Error: ${error.message}. Please check the console for more details.`;
+                errorMessage.textContent = `Erreur: ${error.message}. Veuillez vérifier la console pour plus de détails.`;
             }
         }
 
@@ -175,10 +236,13 @@
                 listenBtn.innerHTML = '🔊';
                 listenBtn.className = 'ml-2 text-sm text-gray-500';
                 listenBtn.onclick = () => speak(message);
+                messageElement.appendChild(document.createTextNode(message));
                 messageElement.appendChild(listenBtn);
             }
             
-            messageElement.textContent = message;
+            if (sender === 'user') {
+                messageElement.textContent = message;
+            }
             chatContainer.appendChild(messageElement);
             chatContainer.scrollTop = chatContainer.scrollHeight;
         }
@@ -186,7 +250,7 @@
         // Speech Recognition
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         const recognition = new SpeechRecognition();
-        recognition.lang = 'en-US';
+        recognition.lang = 'fr-FR';
 
         recognition.onresult = (event) => {
             const transcript = event.results[0][0].transcript;
@@ -200,6 +264,7 @@
         // Text to Speech
         function speak(text) {
             const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'fr-FR';
             window.speechSynthesis.speak(utterance);
         }
 
