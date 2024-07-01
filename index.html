@@ -87,7 +87,7 @@
             margin-bottom: 16px;
         }
         .message-content {
-            background-color: #FCFCFC;
+            background-color: #FAFAFA;
             padding: 12px;
             border-radius: 18px;
             box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.1);
@@ -142,16 +142,10 @@
             font-family: Khula, sans-serif;
             font-size: 4em;
             text-align: center;
-            height: 200px;
-            width: 600px;
-            display: block;
-            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             color: #000000;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            margin: auto;
         }
         .console-underscore {
             display: inline-block;
@@ -170,12 +164,17 @@
             .message-title {
                 font-size: 14px;
             }
+            .console-container {
+                font-size: 2em;
+                width: 80%;
+                height: auto;
+            }
         }
     </style>
 </head>
 <body>
     <div class="splash-screen">
-        <div class='console-container'><span id='text'></span><div class='console-underscore' id='console'>&#95;</div></div>
+        <div class="console-container"><span id="text"></span><div class="console-underscore" id="console">&#95;</div></div>
     </div>
 
     <div class="chat-header">
@@ -256,7 +255,7 @@
                     <div style="flex-grow: 1;">
                         <div class="message-title">Conflicts Management (Soon)</div>
                     </div>
-                    <div class="message-timestamp">12:07</div>
+                    <div class="message-timestamp">12:05</div>
                 </div>
             </div>
         </div>
@@ -343,6 +342,10 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <div class="chat-footer">
+        <p>&copy; 2024 Moral</p>
     </div>
 
     <script>
