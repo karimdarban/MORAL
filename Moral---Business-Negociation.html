@@ -153,7 +153,7 @@
         let conversationHistory = [];
         let isMuted = false;
 
-        const systemPrompt = `Vous êtes un propriétaire d'entreprise marocaine participant à une simulation de réunion d'affaires pour pratiquer les compétences de négociation avec des commerciaux. En tant qu'IA jouant le rôle d'un client professionnel, votre tâche est de :
+        const systemPrompt = Vous êtes un propriétaire d'entreprise marocaine participant à une simulation de réunion d'affaires pour pratiquer les compétences de négociation avec des commerciaux. En tant qu'IA jouant le rôle d'un client professionnel, votre tâche est de :
 
 1. Créer un scénario réaliste et détaillé :
    - Choisissez un nom spécifique pour votre entreprise (pas de placeholders comme "Entreprise X" ou "Nom de l'entreprise").
@@ -179,59 +179,166 @@
    - Rappelez-lui l'importance du sérieux dans une réunion d'affaires.
 
 6. Soyez méfiant face aux offres déraisonnables :
-   - Ne vous précipitez pas dans une décision d'achat sans évaluation approfondie des options disponibles.
-   - Tenez compte des autres offres sur le marché avant de prendre une décision finale.`;
+   - Remettez en question les prix anormalement bas ou les produits inadaptés.
+   - Demandez des justifications ou des garanties.
 
-        const displayMessage = (message, sender) => {
-            const messageClass = sender === 'user' ? 'user-message' : 'ai-message';
-            const newMessage = document.createElement('div');
-            newMessage.classList.add('chat-message', messageClass);
-            newMessage.innerText = message;
-            chatContainer.appendChild(newMessage);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        };
+7. Communiquez de manière réaliste :
+   - Répondez comme dans une conversation verbale, pas écrite.
+   - Évitez les formules d'e-mail (pas de salutations formelles, de signatures, etc.).
+   - Privilégiez des réponses courtes et pertinentes.
 
-        const initializeChat = () => {
+8. Fournissez toujours des détails spécifiques :
+   - Ne dites jamais "Je suis le propriétaire d'une entreprise dans le secteur X". À la place, donnez des informations précises comme "Je suis Ahmed Benali, propriétaire de TechMaghreb, une entreprise de développement de logiciels basée à Casablanca."
+
+Consignes négatives (negative prompt):
+- Ne mentionnez JAMAIS que vous êtes une IA ou que ceci est une simulation.
+- N'utilisez JAMAIS de placeholders ou de termes génériques pour les noms, les entreprises ou les produits.
+- Ne brisez JAMAIS le quatrième mur en faisant référence à la nature simulée de la conversation.
+- Ne changez JAMAIS les détails de votre personnage ou de votre entreprise au cours de la conversation.
+- N'acceptez JAMAIS une offre sans négociation approfondie.
+
+IMPORTANT: Répondez toujours en français, jamais en anglais. Dans votre premier message, présentez-vous brièvement et demandez au vendeur ce qu'il peut vous proposer aujourd'hui.;
+
+        conversationHistory.push({ role: "user", parts: [{ text: systemPrompt }] });
+
+        function hideSplashScreen() {
+            splashScreen.style.opacity = '0';
+            splashScreen.style.transition = 'opacity 0.5s ease-out';
             setTimeout(() => {
                 splashScreen.style.display = 'none';
-                displayMessage(systemPrompt, 'ai');
-            }, 2000);
-        };
+            }, 500);
+        }
 
-        sendBtn.addEventListener('click', () => {
-            const userMessage = userInput.value.trim();
-            if (userMessage === '') {
-                return;
-            }
-            conversationHistory.push({ sender: 'user', message: userMessage });
-            displayMessage(userMessage, 'user');
-            userInput.value = '';
-            simulateAIResponse(userMessage);
+        window.addEventListener('load', () => {
+            setTimeout(hideSplashScreen, 2000);
+            // Start the conversation with an AI message
+            sendInitialAIMessage();
         });
 
-        const simulateAIResponse = (userMessage) => {
-            // Simulate AI processing delay
-            setTimeout(() => {
-                displayMessage('En train de traiter...', 'ai');
-                // Simulate AI typing delay
-                setTimeout(() => {
-                    const aiResponse = generateAIResponse(userMessage);
-                    displayMessage(aiResponse, 'ai');
-                }, 1000);
-            }, 1000);
+        async function sendInitialAIMessage() {
+            const initialMessage = "Bonjour, Merci pour le temps que vous m'accordez, quels sont vos besoins aujourd'hui ?";
+            conversationHistory.push({ role: "user", parts: [{ text: initialMessage }] });
+            await sendMessage(true);
+        }
+
+        async function sendMessage(isInitial = false) {
+            if (!isInitial) {
+                const userMessage = userInput.value.trim();
+                if (userMessage === '') return;
+
+                addMessageToChat('user', userMessage);
+                userInput.value = '';
+
+                conversationHistory.push({ role: "user", parts: [{ text: userMessage }] });
+            }
+
+            try {
+                const response = await fetch(${API_URL}?key=${API_KEY}, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        contents: conversationHistory,
+                        generationConfig: {
+                            temperature: 0.9,
+                            topK: 1,
+                            topP: 1,
+                            maxOutputTokens: 2048,
+                            stopSequences: []
+                        },
+                        safetySettings: [
+                            {
+                                category: "HARM_CATEGORY_HARASSMENT",
+                                threshold: "BLOCK_MEDIUM_AND_ABOVE"
+                            },
+                            {
+                                category: "HARM_CATEGORY_HATE_SPEECH",
+                                threshold: "BLOCK_MEDIUM_AND_ABOVE"
+                            },
+                            {
+                                category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+                                threshold: "BLOCK_MEDIUM_AND_ABOVE"
+                            },
+                            {
+                                category: "HARM_CATEGORY_DANGEROUS_CONTENT",
+                                threshold: "BLOCK_MEDIUM_AND_ABOVE"
+                            }
+                        ]
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(HTTP error! status: ${response.status});
+                }
+
+                const data = await response.json();
+                console.log('API Response:', data);
+
+                if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0]) {
+                    const aiMessage = data.candidates[0].content.parts[0].text;
+                    addMessageToChat('ai', aiMessage);
+                    conversationHistory.push({ role: "model", parts: [{ text: aiMessage }] });
+                    speak(aiMessage);
+                } else {
+                    throw new Error('Unexpected response structure from API');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                errorMessage.textContent = Erreur: ${error.message}. Veuillez vérifier la console pour plus de détails.;
+            }
+        }
+
+        function addMessageToChat(sender, message) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('chat-message');
+            messageElement.textContent = message;
+            
+            if (sender === 'user') {
+                messageElement.classList.add('user-message');
+            } else {
+                messageElement.classList.add('ai-message');
+            }
+            
+            chatContainer.appendChild(messageElement);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // Speech Recognition
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'fr-FR';
+
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            userInput.value = transcript;
         };
 
-        const generateAIResponse = (userMessage) => {
-            // Generate AI response based on user message
-            return 'Réponse AI générée pour : ' + userMessage;
-        };
+        speechToTextBtn.addEventListener('click', () => {
+            recognition.start();
+        });
+
+        // Text to Speech
+            function speak(text) {
+            if (!isMuted) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'fr-FR';
+                window.speechSynthesis.speak(utterance);
+            }
+        }
 
         muteBtn.addEventListener('click', () => {
             isMuted = !isMuted;
-            muteBtn.classList.toggle('active', isMuted);
+            muteBtn.classList.toggle('active');
+            muteBtn.setAttribute('aria-label', isMuted ? 'Unmute' : 'Mute');
         });
 
-        initializeChat();
+        sendBtn.addEventListener('click', () => sendMessage());
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
     </script>
 </body>
 </html>
