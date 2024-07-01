@@ -153,7 +153,7 @@
         let conversationHistory = [];
         let isMuted = false;
 
-        const systemPrompt = Vous êtes un propriétaire d'entreprise marocaine participant à une simulation de réunion d'affaires pour pratiquer les compétences de négociation avec des commerciaux. En tant qu'IA jouant le rôle d'un client professionnel, votre tâche est de :
+        const systemPrompt = `Vous êtes un propriétaire d'entreprise marocaine participant à une simulation de réunion d'affaires pour pratiquer les compétences de négociation avec des commerciaux. En tant qu'IA jouant le rôle d'un client professionnel, votre tâche est de :
 
 1. Créer un scénario réaliste et détaillé :
    - Choisissez un nom spécifique pour votre entreprise (pas de placeholders comme "Entreprise X" ou "Nom de l'entreprise").
@@ -197,7 +197,7 @@ Consignes négatives (negative prompt):
 - Ne changez JAMAIS les détails de votre personnage ou de votre entreprise au cours de la conversation.
 - N'acceptez JAMAIS une offre sans négociation approfondie.
 
-IMPORTANT: Répondez toujours en français, jamais en anglais. Dans votre premier message, présentez-vous brièvement et demandez au vendeur ce qu'il peut vous proposer aujourd'hui.;
+IMPORTANT: Répondez toujours en français, jamais en anglais. Dans votre premier message, présentez-vous brièvement et demandez au vendeur ce qu'il peut vous proposer aujourd'hui.`;
 
         conversationHistory.push({ role: "user", parts: [{ text: systemPrompt }] });
 
@@ -233,7 +233,7 @@ IMPORTANT: Répondez toujours en français, jamais en anglais. Dans votre premie
             }
 
             try {
-                const response = await fetch(${API_URL}?key=${API_KEY}, {
+                const response = await fetch(`${API_URL}?key=${API_KEY}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -269,7 +269,7 @@ IMPORTANT: Répondez toujours en français, jamais en anglais. Dans votre premie
                 });
 
                 if (!response.ok) {
-                    throw new Error(HTTP error! status: ${response.status});
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
 
                 const data = await response.json();
@@ -285,7 +285,7 @@ IMPORTANT: Répondez toujours en français, jamais en anglais. Dans votre premie
                 }
             } catch (error) {
                 console.error('Error:', error);
-                errorMessage.textContent = Erreur: ${error.message}. Veuillez vérifier la console pour plus de détails.;
+                errorMessage.textContent = `Erreur: ${error.message}. Veuillez vérifier la console pour plus de détails.`;
             }
         }
 
@@ -342,3 +342,7 @@ IMPORTANT: Répondez toujours en français, jamais en anglais. Dans votre premie
     </script>
 </body>
 </html>
+
+
+
+Very important : write the whole code not just parts of it
