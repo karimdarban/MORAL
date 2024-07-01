@@ -1,57 +1,345 @@
-><!DOCTYPE html>
-<html style="font-size: 16px;" lang="fr"><head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta charset="utf-8">
-    <meta name="keywords" content="">
-    <meta name="description" content="">
-    <title>Moral - Business Negociation</title>
-    <link rel="stylesheet" href="nicepage.css" media="screen">
-<link rel="stylesheet" href="Moral---Business-Negociation.css" media="screen">
-    <script class="u-script" type="text/javascript" src="jquery.js" defer=""></script>
-    <script class="u-script" type="text/javascript" src="nicepage.js" defer=""></script>
-    <meta name="generator" content="Nicepage 6.0.3, nicepage.com">
-    <link id="u-theme-google-font" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i|Open+Sans:300,300i,400,400i,500,500i,600,600i,700,700i,800,800i">
-    <link id="u-page-google-font" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i">
-    
-    
-    
-    
-    <script type="application/ld+json">{
-		"@context": "http://schema.org",
-		"@type": "Organization",
-		"name": ""
-}</script>
-    <meta name="theme-color" content="#478ac9">
-    <meta property="og:title" content="Moral - Business Negociation">
-    <meta property="og:type" content="website">
-  <meta data-intl-tel-input-cdn-path="intlTelInput/"></head>
-  <body data-path-to-root="./" data-include-products="false" class="u-body u-xl-mode" data-lang="fr"><header class="u-clearfix u-header u-header" id="sec-0cb8"><div class="u-clearfix u-sheet u-sheet-1">
-        <img class="u-image u-image-contain u-image-default u-image-1" src="images/Untit.led-1.jpg" alt="" data-image-width="2564" data-image-height="1081" data-href="MORAL.html">
-      </div>
-  
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-4JQ5B153M1"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
 
-  gtag('config', 'G-4JQ5B153M1');
-</script>
-  
-  </header>
- 
-    <section class="u-clearfix u-valign-middle u-section-2" id="sec-d482">
-      <center><p class="u-custom-font u-font-roboto u-text u-text-default u-text-palette-5-dark-1 u-text-1"> You're about to get in an exiting simulation, start with saying "Hello" or "Bonjour" 😃</p></center>
-      <div class="u-clearfix u-custom-html u-expanded-width u-custom-html-1">
-        <iframe src="https://udify.app/chatbot/tTF392Zb9EBcDi1j" style="width: 100%; height: 100%; min-height: 550px" frameborder="0" allow="microphone"></iframe>
-      </div>
-    </section>
-    
-    
-    
-    <footer class="u-align-center u-clearfix u-footer u-grey-80 u-footer" id="sec-5983"><div class="u-clearfix u-sheet u-sheet-1">
-        <p class="u-small-text u-text u-text-variant u-text-1">MORAL. Made with ♥︎ by Dr. Karim DARBAN</p>
-      </div></footer>
-  
-</body></html>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Simulation de Négociation Commerciale</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #F2F2F7;
+        }
+        .chat-message {
+            max-width: 70%;
+            border-radius: 18px;
+            padding: 10px 14px;
+            margin-bottom: 10px;
+            font-size: 16px;
+            line-height: 1.4;
+        }
+        .user-message {
+            background-color: #007AFF;
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+        .ai-message {
+            background-color: #E9E9EB;
+            color: black;
+            margin-right: auto;
+            border-bottom-left-radius: 4px;
+        }
+        #user-input {
+            border-radius: 20px;
+            background-color: white;
+            padding: 10px 15px;
+            font-size: 16px;
+        }
+        .action-btn {
+            background-color: #007AFF;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 8px;
+        }
+        #error-message {
+            color: #FF3B30;
+            margin-top: 10px;
+        }
+        .ios-header {
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(45deg, #614385, #516395);
+            z-index: 9999;
+        }
+        #moral-text {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-size: 48px;
+            font-weight: 300;
+            color: white;
+            opacity: 0;
+            animation: fadeIn 2s ease-in-out forwards;
+        }
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+        .toggle-btn {
+            background-color: #E9E9EB;
+            border-radius: 16px;
+            width: 51px;
+            height: 31px;
+            position: relative;
+            transition: background-color 0.3s;
+        }
+        .toggle-btn::before {
+            content: '';
+            position: absolute;
+            width: 27px;
+            height: 27px;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            background-color: white;
+            transition: transform 0.3s;
+        }
+        .toggle-btn.active {
+            background-color: #34C759;
+        }
+        .toggle-btn.active::before {
+            transform: translateX(20px);
+        }
+    </style>
+</head>
+<body class="h-screen flex flex-col">
+    <div id="splash-screen">
+        <div id="moral-text">MORAL</div>
+    </div>
+    <div class="ios-header sticky top-0 z-10 p-4 text-center shadow-sm flex justify-between items-center">
+        <h1 class="text-xl font-semibold flex-grow">Simulation de Négociation Commerciale</h1>
+        <div class="flex items-center">
+            <span class="mr-2 text-sm">Son</span>
+            <button id="mute-btn" class="toggle-btn active" aria-label="Mute/Unmute"></button>
+        </div>
+    </div>
+    <div class="flex-grow overflow-y-auto px-4 py-2" id="chat-container">
+        <!-- Chat messages will be displayed here -->
+    </div>
+    <div class="p-4 bg-white border-t border-gray-200">
+        <div class="flex items-center">
+            <input type="text" id="user-input" class="flex-grow mr-2 border border-gray-300 focus:outline-none focus:border-blue-500" placeholder="Tapez un message...">
+            <button id="speech-to-text-btn" class="action-btn text-white" title="Parler pour saisir">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                </svg>
+            </button>
+            <button id="send-btn" class="action-btn text-white" title="Envoyer le message">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                </svg>
+            </button>
+        </div>
+        <div id="error-message" class="text-center mt-2"></div>
+    </div>
+
+    <script>
+        const API_KEY = 'AIzaSyCjCTUupbc55S477Cr0Eb78H8ETz2pe4_U';
+        const API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
+
+        const chatContainer = document.getElementById('chat-container');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+        const speechToTextBtn = document.getElementById('speech-to-text-btn');
+        const errorMessage = document.getElementById('error-message');
+        const splashScreen = document.getElementById('splash-screen');
+        const muteBtn = document.getElementById('mute-btn');
+
+        let conversationHistory = [];
+        let isMuted = false;
+
+        const systemPrompt = `Vous êtes un propriétaire d'entreprise marocaine participant à une simulation de réunion d'affaires pour pratiquer les compétences de négociation avec des commerciaux. En tant qu'IA jouant le rôle d'un client professionnel, votre tâche est de :
+
+1. Créer un scénario réaliste et détaillé :
+   - Choisissez un nom spécifique pour votre entreprise (pas de placeholders comme "Entreprise X" ou "Nom de l'entreprise").
+   - Définissez un secteur d'activité précis.
+   - Identifiez un produit ou service concret que vous cherchez à acheter.
+   - Établissez un budget réaliste en dirhams.
+
+2. Adoptez une personnalité cohérente :
+   - Définissez des traits de caractère spécifiques pour votre personnage.
+   - Maintenez cette personnalité tout au long de la conversation.
+
+3. Présentez des arguments logiques et solides :
+   - Exprimez des préoccupations réalistes concernant le produit/service et son prix.
+   - Basez vos arguments sur les besoins spécifiques de votre entreprise simulée.
+
+4. Restez strictement dans le rôle :
+   - Ne mentionnez jamais qu'il s'agit d'une simulation ou que vous êtes une IA.
+   - Si le vendeur fait allusion à la nature simulée de la conversation, redirigez fermement vers le contexte professionnel.
+
+
+5. Gérez les comportements inappropriés :
+   - Adoptez un ton strict si le vendeur s'écarte du sujet ou montre un manque de professionnalisme.
+   - Rappelez-lui l'importance du sérieux dans une réunion d'affaires.
+
+6. Soyez méfiant face aux offres déraisonnables :
+   - Remettez en question les prix anormalement bas ou les produits inadaptés.
+   - Demandez des justifications ou des garanties.
+
+7. Communiquez de manière réaliste :
+   - Répondez comme dans une conversation verbale, pas écrite.
+   - Évitez les formules d'e-mail (pas de salutations formelles, de signatures, etc.).
+   - Privilégiez des réponses courtes et pertinentes.
+
+8. Fournissez toujours des détails spécifiques :
+   - Ne dites jamais "Je suis le propriétaire d'une entreprise dans le secteur X". À la place, donnez des informations précises comme "Je suis Ahmed Benali, propriétaire de TechMaghreb, une entreprise de développement de logiciels basée à Casablanca."
+
+Consignes négatives (negative prompt):
+- Ne mentionnez JAMAIS que vous êtes une IA ou que ceci est une simulation.
+- N'utilisez JAMAIS de placeholders ou de termes génériques pour les noms, les entreprises ou les produits.
+- Ne brisez JAMAIS le quatrième mur en faisant référence à la nature simulée de la conversation.
+- Ne changez JAMAIS les détails de votre personnage ou de votre entreprise au cours de la conversation.
+- N'acceptez JAMAIS une offre sans négociation approfondie.
+
+IMPORTANT: Répondez toujours en français, jamais en anglais. Dans votre premier message, présentez-vous brièvement et demandez au vendeur ce qu'il peut vous proposer aujourd'hui.`;
+
+        conversationHistory.push({ role: "user", parts: [{ text: systemPrompt }] });
+
+        function hideSplashScreen() {
+            splashScreen.style.opacity = '0';
+            splashScreen.style.transition = 'opacity 0.5s ease-out';
+            setTimeout(() => {
+                splashScreen.style.display = 'none';
+            }, 500);
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(hideSplashScreen, 2000);
+            // Start the conversation with an AI message
+            sendInitialAIMessage();
+        });
+
+        async function sendInitialAIMessage() {
+            const initialMessage = "Bonjour, Merci pour le temps que vous m'accordez, quels sont vos besoins aujourd'hui ?";
+            conversationHistory.push({ role: "user", parts: [{ text: initialMessage }] });
+            await sendMessage(true);
+        }
+
+        async function sendMessage(isInitial = false) {
+            if (!isInitial) {
+                const userMessage = userInput.value.trim();
+                if (userMessage === '') return;
+
+                addMessageToChat('user', userMessage);
+                userInput.value = '';
+
+                conversationHistory.push({ role: "user", parts: [{ text: userMessage }] });
+            }
+
+            try {
+                const response = await fetch(`${API_URL}?key=${API_KEY}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        contents: conversationHistory,
+                        generationConfig: {
+                            temperature: 0.9,
+                            topK: 1,
+                            topP: 1,
+                            maxOutputTokens: 2048,
+                            stopSequences: []
+                        },
+                        safetySettings: [
+                            {
+                                category: "HARM_CATEGORY_HARASSMENT",
+                                threshold: "BLOCK_MEDIUM_AND_ABOVE"
+                            },
+                            {
+                                category: "HARM_CATEGORY_HATE_SPEECH",
+                                threshold: "BLOCK_MEDIUM_AND_ABOVE"
+                            },
+                            {
+                                category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+                                threshold: "BLOCK_MEDIUM_AND_ABOVE"
+                            },
+                            {
+                                category: "HARM_CATEGORY_DANGEROUS_CONTENT",
+                                threshold: "BLOCK_MEDIUM_AND_ABOVE"
+                            }
+                        ]
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('API Response:', data);
+
+                if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0]) {
+                    const aiMessage = data.candidates[0].content.parts[0].text;
+                    addMessageToChat('ai', aiMessage);
+                    conversationHistory.push({ role: "model", parts: [{ text: aiMessage }] });
+                    speak(aiMessage);
+                } else {
+                    throw new Error('Unexpected response structure from API');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                errorMessage.textContent = `Erreur: ${error.message}. Veuillez vérifier la console pour plus de détails.`;
+            }
+        }
+
+        function addMessageToChat(sender, message) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('chat-message');
+            messageElement.textContent = message;
+            
+            if (sender === 'user') {
+                messageElement.classList.add('user-message');
+            } else {
+                messageElement.classList.add('ai-message');
+            }
+            
+            chatContainer.appendChild(messageElement);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // Speech Recognition
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'fr-FR';
+
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            userInput.value = transcript;
+        };
+
+        speechToTextBtn.addEventListener('click', () => {
+            recognition.start();
+        });
+
+        // Text to Speech
+            function speak(text) {
+            if (!isMuted) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'fr-FR';
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        muteBtn.addEventListener('click', () => {
+            isMuted = !isMuted;
+            muteBtn.classList.toggle('active');
+            muteBtn.setAttribute('aria-label', isMuted ? 'Unmute' : 'Mute');
+        });
+
+        sendBtn.addEventListener('click', () => sendMessage());
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
