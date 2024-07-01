@@ -405,35 +405,24 @@
         document.addEventListener("DOMContentLoaded", function() {
             const tabs = document.querySelectorAll('.tab');
             const accordionContents = document.querySelectorAll('.accordion-content');
-            let currentIndex = 0;
 
-            tabs.forEach((tab, index) => {
+            tabs.forEach(tab => {
                 tab.addEventListener('click', function() {
-                    switchTab(index);
+                    const tabId = this.getAttribute('data-tab');
+
+                    tabs.forEach(tab => {
+                        tab.classList.remove('active');
+                    });
+                    this.classList.add('active');
+
+                    accordionContents.forEach(content => {
+                        if (content.id === tabId) {
+                            content.classList.add('show');
+                        } else {
+                            content.classList.remove('show');
+                        }
+                    });
                 });
-            });
-
-            function switchTab(index) {
-                tabs.forEach((tab, tabIndex) => {
-                    tab.classList.toggle('active', tabIndex === index);
-                    accordionContents[tabIndex].classList.toggle('show', tabIndex === index);
-                });
-                currentIndex = index;
-            }
-
-            const container = document.querySelector('.chat-container');
-            const hammer = new Hammer(container);
-
-            hammer.on('swipeleft', function() {
-                if (currentIndex < tabs.length - 1) {
-                    switchTab(currentIndex + 1);
-                }
-            });
-
-            hammer.on('swiperight', function() {
-                if (currentIndex > 0) {
-                    switchTab(currentIndex - 1);
-                }
             });
         });
     </script>
