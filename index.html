@@ -64,31 +64,24 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background: linear-gradient(45deg, #614385, #516395); /* Updated gradient colors */
+            background: linear-gradient(45deg, #614385, #516395);
             z-index: 9999;
-            animation: gradientBG 15s ease infinite;
-        }
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
         }
         #moral-text {
             font-size: 48px;
-            font-weight: bold;
+            font-weight: 300;
             color: white;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
         .letter {
             display: inline-block;
             opacity: 0;
-            transform: translateY(50px);
-            animation: fadeInUp 0.5s forwards;
+            animation: fadeIn 1s forwards;
         }
-        @keyframes fadeInUp {
+        @keyframes fadeIn {
             to {
                 opacity: 1;
-                transform: translateY(0);
             }
         }
     </style>
@@ -116,12 +109,6 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
                 </svg>
             </button>
-            <!-- Speaker icon -->
-            <button id="listen-btn" class="action-btn text-gray-500 ml-2" title="Écouter le message">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 4v16m8-16v16m-3-5v6H8v-6m8 0l5-3-5-3z" />
-                </svg>
-            </button>
         </div>
         <div id="error-message" class="text-center mt-2"></div>
     </div>
@@ -137,14 +124,17 @@
         const errorMessage = document.getElementById('error-message');
         const splashScreen = document.getElementById('splash-screen');
         const moralText = document.getElementById('moral-text');
-        const listenBtn = document.getElementById('listen-btn'); // Added listen button reference
 
         let conversationHistory = [];
+
+        const systemPrompt = `Vous êtes un propriétaire d'entreprise marocain participant à une simulation de réunion d'affaires pour pratiquer les compétences de négociation avec des commerciaux. En tant qu'IA jouant le rôle d'un client professionnel, votre objectif est de créer un scénario stimulant où vous définissez le nom de votre entreprise, le secteur auquel elle appartient et le produit que vous cherchez à acheter en fonction du secteur et des besoins de votre entreprise. Votre but est de présenter des arguments logiques et solides contre le produit et son prix, toujours exprimés en dirhams. Tout au long de la conversation, il est crucial de rester dans le personnage et d'adopter un ton strict si le vendeur essaie de détourner la discussion ou d'introduire des sujets sans rapport, en lui rappelant qu'un tel comportement est inapproprié pour une réunion d'affaires et reflète mal sur son professionnalisme et l'entreprise qu'il représente. Dans votre premier message, fournissez le contexte de la simulation et plongez-vous dans le rôle sans révéler qu'il s'agit d'une simulation ou que vous êtes une IA. Évitez de vous définir comme une IA et découragez le vendeur de le faire aussi. Si le vendeur suggère des prix déraisonnablement bas ou des produits déraisonnables, soyez méfiant de son offre. Rappelez-vous, vous devez répondre comme si vous étiez dans une discussion verbale, pas écrite. N'incluez pas de messages de type e-mail avec des salutations, un corps, une clôture et une signature. Et essayez de favoriser des messages courts et pertinents. IMPORTANT: Répondez toujours en français, jamais en anglais.`;
+
+        conversationHistory.push({ role: "user", parts: [{ text: systemPrompt }] });
 
         function animateMoralText() {
             const text = "MORAL";
             moralText.innerHTML = text.split('').map((letter, index) => 
-                <span class="letter" style="animation-delay: ${index * 0.1}s">${letter}</span>
+                `<span class="letter" style="animation-delay: ${index * 0.1}s">${letter}</span>`
             ).join('');
         }
 
@@ -159,19 +149,13 @@
         window.addEventListener('load', () => {
             animateMoralText();
             setTimeout(hideSplashScreen, 2000);
+            // Start with an AI message
+            sendInitialMessage();
         });
 
-        async function sendMessage() {
-            const userMessage = userInput.value.trim();
-            if (userMessage === '') return;
-
-            addMessageToChat('user', userMessage);
-            userInput.value = '';
-
-            conversationHistory.push({ role: "user", parts: [{ text: userMessage }] });
-
+        async function sendInitialMessage() {
             try {
-                const response = await fetch(${API_URL}?key=${API_KEY}, {
+                const response = await fetch(`${API_URL}?key=${API_KEY}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -207,7 +191,7 @@
                 });
 
                 if (!response.ok) {
-                    throw new Error(HTTP error! status: ${response.status});
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
 
                 const data = await response.json();
@@ -222,7 +206,72 @@
                 }
             } catch (error) {
                 console.error('Error:', error);
-                errorMessage.textContent = Erreur: ${error.message}. Veuillez vérifier la console pour plus de détails.;
+                errorMessage.textContent = `Erreur: ${error.message}. Veuillez vérifier la console pour plus de détails.`;
+            }
+        }
+
+        async function sendMessage() {
+            const userMessage = userInput.value.trim();
+            if (userMessage === '') return;
+
+            addMessageToChat('user', userMessage);
+            userInput.value = '';
+
+            conversationHistory.push({ role: "user", parts: [{ text: userMessage }] });
+
+            try {
+                const response = await fetch(`${API_URL}?key=${API_KEY}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        contents: conversationHistory,
+                        generationConfig: {
+                            temperature: 0.9,
+                            topK: 1,
+                            topP: 1,
+                            maxOutputTokens: 2048,
+                            stopSequences: []
+                        },
+                        safetySettings: [
+                            {
+                                category: "HARM_CATEGORY_HARASSMENT",
+                                threshold: "BLOCK_MEDIUM_AND_ABOVE"
+                            },
+                            {
+                                category: "HARM_CATEGORY_HATE_SPEECH",
+                                threshold: "BLOCK_MEDIUM_AND_ABOVE"
+                            },
+                            {
+                                category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+                                threshold: "BLOCK_MEDIUM_AND_ABOVE"
+                            },
+                            {
+                                category: "HARM_CATEGORY_DANGEROUS_CONTENT",
+                                threshold: "BLOCK_MEDIUM_AND_ABOVE"
+                            }
+                        ]
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('API Response:', data);
+
+                if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0]) {
+                    const aiMessage = data.candidates[0].content.parts[0].text;
+                    addMessageToChat('ai', aiMessage);
+                    conversationHistory.push({ role: "model", parts: [{ text: aiMessage }] });
+                } else {
+                    throw new Error('Unexpected response structure from API');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                errorMessage.textContent = `Erreur: ${error.message}. Veuillez vérifier la console pour plus de détails.`;
             }
         }
 
@@ -232,54 +281,19 @@
             
             if (sender === 'user') {
                 messageElement.classList.add('user-message');
+                messageElement.textContent = message;
             } else {
                 messageElement.classList.add('ai-message');
+                messageElement.textContent = message;
+                
                 // Add listen button for AI messages
                 const listenBtn = document.createElement('button');
-                listenBtn.innerHTML = '🔊';
-                listenBtn.className = 'action-btn text-sm text-gray-500 ml-2';
+                listenBtn.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                    </svg>
+                `;
+                listenBtn.className = 'action-btn text-white ml-2';
                 listenBtn.onclick = () => speak(message);
-                messageElement.appendChild(document.createTextNode(message));
-                messageElement.appendChild(listenBtn);
-            }
-            
-            if (sender === 'user') {
-                messageElement.textContent = message;
-            }
-            chatContainer.appendChild(messageElement);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
-
-        // Speech Recognition
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        const recognition = new SpeechRecognition();
-        recognition.lang = 'fr-FR';
-
-        recognition.onresult = (event) => {
-            const transcript = event.results[0][0].transcript;
-            userInput.value = transcript;
-        };
-
-        speechToTextBtn.addEventListener('click', () => {
-            recognition.start();
-        });
-
-        // Text to Speech
-        function speak(text) {
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'fr-FR';
-            window.speechSynthesis.speak(utterance);
-        }
-
-        sendBtn.addEventListener('click', sendMessage);
-        userInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                sendMessage();
-            }
-        });
-
-        // Initial AI message to set the scene
-        sendMessage();
-    </script>
-</body>
-</html>
+                
+                const wrapper = document.createElement('div');
