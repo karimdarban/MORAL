@@ -80,7 +80,7 @@
             margin-bottom: 16px;
         }
         .message-content {
-            background-color: #fcfcfc;
+            background-color: #FCFCFC;
             padding: 12px;
             border-radius: 18px;
             box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.1);
@@ -405,24 +405,35 @@
         document.addEventListener("DOMContentLoaded", function() {
             const tabs = document.querySelectorAll('.tab');
             const accordionContents = document.querySelectorAll('.accordion-content');
+            let currentIndex = 0;
 
-            tabs.forEach(tab => {
+            tabs.forEach((tab, index) => {
                 tab.addEventListener('click', function() {
-                    const tabId = this.getAttribute('data-tab');
-
-                    tabs.forEach(tab => {
-                        tab.classList.remove('active');
-                    });
-                    this.classList.add('active');
-
-                    accordionContents.forEach(content => {
-                        if (content.id === tabId) {
-                            content.classList.add('show');
-                        } else {
-                            content.classList.remove('show');
-                        }
-                    });
+                    switchTab(index);
                 });
+            });
+
+            function switchTab(index) {
+                tabs.forEach((tab, tabIndex) => {
+                    tab.classList.toggle('active', tabIndex === index);
+                    accordionContents[tabIndex].classList.toggle('show', tabIndex === index);
+                });
+                currentIndex = index;
+            }
+
+            const container = document.querySelector('.chat-container');
+            const hammer = new Hammer(container);
+
+            hammer.on('swipeleft', function() {
+                if (currentIndex < tabs.length - 1) {
+                    switchTab(currentIndex + 1);
+                }
+            });
+
+            hammer.on('swiperight', function() {
+                if (currentIndex > 0) {
+                    switchTab(currentIndex - 1);
+                }
             });
         });
     </script>
