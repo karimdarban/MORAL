@@ -2,343 +2,353 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Simulation de Négociation Commerciale</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moral</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: #F2F2F7;
+            font-family: 'San Francisco', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #FFFFFF; /* Fond blanc */
+            margin: 0;
+            padding: 0;
+        }
+        .chat-header {
+            background-color: #FFFFFF; /* Fond blanc */
+            color: #333333;
+            padding: 16px;
+            text-align: left;
+            font-size: 20px;
+            font-weight: bold;
+            margin: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .chat-header .menu-icon {
+            color: #333333;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .tabs {
+            display: flex;
+            justify-content: center; /* Centre les tabs */
+            margin-bottom: 16px;
+            position: relative;
+            background-color: #FFFFFF; /* Fond blanc */
+        }
+        .tab {
+            padding: 12px 16px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #333333;
+            transition: border-bottom-color 0.3s;
+        }
+        .tab.active {
+            border-bottom: 2px solid #007AFF;
+        }
+        .active-indicator {
+            position: absolute;
+            bottom: 0;
+            height: 2px;
+            background-color: #007AFF;
+            width: 0;
+            transition: width 0.3s ease-in-out, left 0.3s ease-in-out;
+        }
+        .chat-container {
+            padding: 16px;
+            overflow-y: auto;
+            height: calc(100vh - 132px); /* Ajustement pour header et footer */
+        }
+        .accordion-content {
+            display: none;
+        }
+        .accordion-content.show {
+            display: block;
+        }
+        .chat-footer {
+            background-color: #FFFFFF; /* Fond blanc */
+            text-align: center;
+            padding: 12px;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1); /* Ombre légère */
+        }
+        .chat-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin: 16px 0 8px;
+            color: #333333;
         }
         .chat-message {
-            max-width: 70%;
-            border-radius: 18px;
-            padding: 10px 14px;
-            margin-bottom: 10px;
-            font-size: 16px;
-            line-height: 1.4;
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
         }
-        .user-message {
-            background-color: #007AFF;
-            color: white;
-            margin-left: auto;
-            border-bottom-right-radius: 4px;
+        .message-content {
+            background-color: #FFFFFF;
+            padding: 12px;
+            border-radius: 1px;
+            box-shadow: 0 1px 0px rgba(0, 0, 0, 0.1); /* Ombre légère */
+            flex-grow: 1;
+            display: flex;
+            justify-content: flex-start; /* Aligne le contenu à gauche */
+            align-items: center;
         }
-        .ai-message {
-            background-color: #E9E9EB;
-            color: black;
-            margin-right: auto;
-            border-bottom-left-radius: 4px;
-        }
-        #user-input {
-            border-radius: 20px;
-            background-color: white;
-            padding: 10px 15px;
-            font-size: 16px;
-        }
-        .action-btn {
-            background-color: #007AFF;
-            border-radius: 50%;
+        .avatar {
             width: 40px;
             height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-left: 8px;
-        }
-        #error-message {
-            color: #FF3B30;
-            margin-top: 10px;
-        }
-        .ios-header {
-            background-color: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-        }
-        #splash-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: linear-gradient(45deg, #614385, #516395);
-            z-index: 9999;
-        }
-        #moral-text {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            font-size: 48px;
-            font-weight: 300;
-            color: white;
-            opacity: 0;
-            animation: fadeIn 2s ease-in-out forwards;
-        }
-        @keyframes fadeIn {
-            to {
-                opacity: 1;
-            }
-        }
-        .toggle-btn {
-            background-color: #E9E9EB;
-            border-radius: 16px;
-            width: 51px;
-            height: 31px;
-            position: relative;
-            transition: background-color 0.3s;
-        }
-        .toggle-btn::before {
-            content: '';
-            position: absolute;
-            width: 27px;
-            height: 27px;
             border-radius: 50%;
-            top: 2px;
-            left: 2px;
-            background-color: white;
-            transition: transform 0.3s;
+            margin-right: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            color: #FFFFFF;
+            box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.7); /* Lueur */
         }
-        .toggle-btn.active {
-            background-color: #34C759;
+        .avatar i {
+            font-size: 24px;
         }
-        .toggle-btn.active::before {
-            transform: translateX(20px);
+        .message-title {
+            font-weight: bold;
+            color: #333333;
+            margin-bottom: 4px;
+        }
+        .message-timestamp {
+            color: #999999;
+            font-size: 12px;
+            margin-left: auto; /* Place le timestamp à droite */
         }
     </style>
 </head>
-<body class="h-screen flex flex-col">
-    <div id="splash-screen">
-        <div id="moral-text">MORAL</div>
+<body>
+
+    <div class="chat-header">
+        <div>Moral</div>
+        <div class="menu-icon"><i class="fas fa-bars"></i></div>
     </div>
-    <div class="ios-header sticky top-0 z-10 p-4 text-center shadow-sm flex justify-between items-center">
-        <h1 class="text-xl font-semibold flex-grow">Simulation de Négociation Commerciale</h1>
-        <div class="flex items-center">
-            <span class="mr-2 text-sm">Son</span>
-            <button id="mute-btn" class="toggle-btn active" aria-label="Mute/Unmute"></button>
+
+    <div class="tabs">
+        <div class="tab active" data-tab="business-management">Business</div>
+        <div class="tab" data-tab="engineering">Ingénierie</div>
+        <div class="tab" data-tab="health">Santé</div>
+        <div class="active-indicator"></div>
+    </div>
+
+    <div class="chat-container">
+
+        <!-- Contenu de l'accordéon pour Business et Management -->
+        <div class="accordion-content show" id="business-management">
+            <div class="chat-message">
+                <div class="message-content">
+                    <div class="avatar" style="background-color: #a9c1a8;">
+                        <i class="fas fa-handshake-alt"></i>
+                    </div>
+                    <div>
+                        <div class="message-title">Négociation Commerciale</div>
+                        <div class="message-timestamp">12:00</div>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-message">
+                <div class="message-content">
+                    <div class="avatar" style="background-color: #cccaac;">
+                        <i class="fas fa-balance-scale"></i>
+                    </div>
+                    <div>
+                        <div class="message-title">General Argumentation (Soon)</div>
+                        <div class="message-timestamp">12:01</div>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-message">
+                <div class="message-content">
+                    <div class="avatar" style="background-color: #c5ae96;">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div>
+                        <div class="message-title">Business English for Email Writing (Soon)</div>
+                        <div class="message-timestamp">12:02</div>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-message">
+                <div class="message-content">
+                    <div class="avatar" style="background-color: #009aa6;">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div>
+                        <div class="message-title">Business English for Formal Discussion (Soon)</div>
+                        <div class="message-timestamp">12:03</div>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-message">
+                <div class="message-content">
+                    <div class="avatar" style="background-color: #BDBEC2;">
+                        <i class="fas fa-bullhorn"></i>
+                    </div>
+                    <div>
+                        <div class="message-title">Advertisement Agency (Soon)</div>
+                        <div class="message-timestamp">12:04</div>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-message">
+                <div class="message-content">
+                    <div class="avatar" style="background-color: #00405D;">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div>
+                        <div class="message-title">Consulting (Soon)</div>
+                        <div class="message-timestamp">12:05</div>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-message">
+                <div class="message-content">
+                    <div class="avatar" style="background-color: #4089A6;">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <div>
+                        <div class="message-title">Job Interview (Soon)</div>
+                        <div class="message-timestamp">12:06</div>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-message">
+                <div class="message-content">
+                    <div class="avatar" style="background-color: #a9c1a8;">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <div>
+                        <div class="message-title">Conflict Management (Soon)</div>
+                        <div class="message-timestamp">12:07</div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-    <div class="flex-grow overflow-y-auto px-4 py-2" id="chat-container">
-        <!-- Chat messages will be displayed here -->
-    </div>
-    <div class="p-4 bg-white border-t border-gray-200">
-        <div class="flex items-center">
-            <input type="text" id="user-input" class="flex-grow mr-2 border border-gray-300 focus:outline-none focus:border-blue-500" placeholder="Tapez un message...">
-            <button id="speech-to-text-btn" class="action-btn text-white" title="Parler pour saisir">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-                </svg>
-            </button>
-            <button id="send-btn" class="action-btn text-white" title="Envoyer le message">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-                </svg>
-            </button>
+
+        <!-- Contenu de l'accordéon pour Ingénierie -->
+        <div class="accordion-content" id="engineering">
+            <div class="chat-message">
+                <div class="message-content">
+                    <div class="avatar" style="background-color: #cccaac;">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <div>
+                        <div class="message-title">Customer Needs Analysis (Soon)</div>
+                        <div class="message-timestamp">12:08</div>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-message">
+                <div class="message-content">
+                    <div class="avatar" style="background-color: #00405D;">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div>
+                        <div class="message-title">Consulting (Soon)</div>
+                        <div class="message-timestamp">12:09</div>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-message">
+                <div class="message-content">
+                    <div class="avatar" style="background-color: #4089A6;">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <div>
+                        <div class="message-title">Job Interview (Soon)</div>
+                        <div class="message-timestamp">12:10</div>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-message">
+                <div class="message-content">
+                    <div class="avatar" style="background-color: #c5ae96;">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div>
+                        <div class="message-title">Business English for Email Writing (Soon)</div>
+                        <div class="message-timestamp">12:11</div>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-message">
+                <div class="message-content">
+                    <div class="avatar" style="background-color: #009aa6;">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div>
+                        <div class="message-title">Business English for Formal Discussion (Soon)</div>
+                        <div class="message-timestamp">12:12</div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div id="error-message" class="text-center mt-2"></div>
+
+        <!-- Contenu de l'accordéon pour Santé -->
+        <div class="accordion-content" id="health">
+            <div class="chat-message">
+                <div class="message-content">
+                    <div class="avatar" style="background-color: #BDBEC2;">
+                        <i class="fas fa-user-md"></i>
+                    </div>
+                    <div>
+                        <div class="message-title">Diagnostic Interrogation (Soon)</div>
+                        <div class="message-timestamp">12:13</div>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-message">
+                <div class="message-content">
+                    <div class="avatar" style="background-color: #00405D;">
+                        <i class="fas fa-hospital-user"></i>
+                    </div>
+                    <div>
+                        <div class="message-title">Patient Education (Soon)</div>
+                        <div class="message-timestamp">12:14</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="chat-footer">
+        <p>&copy; 2024 Moral</p>
     </div>
 
     <script>
-        const API_KEY = 'AIzaSyCjCTUupbc55S477Cr0Eb78H8ETz2pe4_U';
-        const API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
+        document.addEventListener("DOMContentLoaded", function() {
+            const tabs = document.querySelectorAll('.tab');
+            const accordionContents = document.querySelectorAll('.accordion-content');
+            const activeIndicator = document.querySelector('.active-indicator');
 
-        const chatContainer = document.getElementById('chat-container');
-        const userInput = document.getElementById('user-input');
-        const sendBtn = document.getElementById('send-btn');
-        const speechToTextBtn = document.getElementById('speech-to-text-btn');
-        const errorMessage = document.getElementById('error-message');
-        const splashScreen = document.getElementById('splash-screen');
-        const muteBtn = document.getElementById('mute-btn');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
 
-        let conversationHistory = [];
-        let isMuted = false;
+                    tabs.forEach(tab => {
+                        tab.classList.remove('active');
+                    });
+                    this.classList.add('active');
 
-        const systemPrompt = `Vous êtes un propriétaire d'entreprise marocaine participant à une simulation de réunion d'affaires pour pratiquer les compétences de négociation avec des commerciaux. En tant qu'IA jouant le rôle d'un client professionnel, votre tâche est de :
+                    accordionContents.forEach(content => {
+                        if (content.id === tabId) {
+                            content.classList.add('show');
+                        } else {
+                            content.classList.remove('show');
+                        }
+                    });
 
-1. Créer un scénario réaliste et détaillé :
-   - Choisissez un nom spécifique pour votre entreprise (pas de placeholders comme "Entreprise X" ou "Nom de l'entreprise").
-   - Définissez un secteur d'activité précis.
-   - Identifiez un produit ou service concret que vous cherchez à acheter.
-   - Établissez un budget réaliste en dirhams.
-
-2. Adoptez une personnalité cohérente :
-   - Définissez des traits de caractère spécifiques pour votre personnage.
-   - Maintenez cette personnalité tout au long de la conversation.
-
-3. Présentez des arguments logiques et solides :
-   - Exprimez des préoccupations réalistes concernant le produit/service et son prix.
-   - Basez vos arguments sur les besoins spécifiques de votre entreprise simulée.
-
-4. Restez strictement dans le rôle :
-   - Ne mentionnez jamais qu'il s'agit d'une simulation ou que vous êtes une IA.
-   - Si le vendeur fait allusion à la nature simulée de la conversation, redirigez fermement vers le contexte professionnel.
-
-
-5. Gérez les comportements inappropriés :
-   - Adoptez un ton strict si le vendeur s'écarte du sujet ou montre un manque de professionnalisme.
-   - Rappelez-lui l'importance du sérieux dans une réunion d'affaires.
-
-6. Soyez méfiant face aux offres déraisonnables :
-   - Remettez en question les prix anormalement bas ou les produits inadaptés.
-   - Demandez des justifications ou des garanties.
-
-7. Communiquez de manière réaliste :
-   - Répondez comme dans une conversation verbale, pas écrite.
-   - Évitez les formules d'e-mail (pas de salutations formelles, de signatures, etc.).
-   - Privilégiez des réponses courtes et pertinentes.
-
-8. Fournissez toujours des détails spécifiques :
-   - Ne dites jamais "Je suis le propriétaire d'une entreprise dans le secteur X". À la place, donnez des informations précises comme "Je suis Ahmed Benali, propriétaire de TechMaghreb, une entreprise de développement de logiciels basée à Casablanca."
-
-Consignes négatives (negative prompt):
-- Ne mentionnez JAMAIS que vous êtes une IA ou que ceci est une simulation.
-- N'utilisez JAMAIS de placeholders ou de termes génériques pour les noms, les entreprises ou les produits.
-- Ne brisez JAMAIS le quatrième mur en faisant référence à la nature simulée de la conversation.
-- Ne changez JAMAIS les détails de votre personnage ou de votre entreprise au cours de la conversation.
-- N'acceptez JAMAIS une offre sans négociation approfondie.
-
-IMPORTANT: Répondez toujours en français, jamais en anglais. Dans votre premier message, présentez-vous brièvement et demandez au vendeur ce qu'il peut vous proposer aujourd'hui.`;
-
-        conversationHistory.push({ role: "user", parts: [{ text: systemPrompt }] });
-
-        function hideSplashScreen() {
-            splashScreen.style.opacity = '0';
-            splashScreen.style.transition = 'opacity 0.5s ease-out';
-            setTimeout(() => {
-                splashScreen.style.display = 'none';
-            }, 500);
-        }
-
-        window.addEventListener('load', () => {
-            setTimeout(hideSplashScreen, 2000);
-            // Start the conversation with an AI message
-            sendInitialAIMessage();
-        });
-
-        async function sendInitialAIMessage() {
-            const initialMessage = "Bonjour, Merci pour le temps que vous m'accordez, quels sont vos besoins aujourd'hui ?";
-            conversationHistory.push({ role: "user", parts: [{ text: initialMessage }] });
-            await sendMessage(true);
-        }
-
-        async function sendMessage(isInitial = false) {
-            if (!isInitial) {
-                const userMessage = userInput.value.trim();
-                if (userMessage === '') return;
-
-                addMessageToChat('user', userMessage);
-                userInput.value = '';
-
-                conversationHistory.push({ role: "user", parts: [{ text: userMessage }] });
-            }
-
-            try {
-                const response = await fetch(`${API_URL}?key=${API_KEY}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        contents: conversationHistory,
-                        generationConfig: {
-                            temperature: 0.9,
-                            topK: 1,
-                            topP: 1,
-                            maxOutputTokens: 2048,
-                            stopSequences: []
-                        },
-                        safetySettings: [
-                            {
-                                category: "HARM_CATEGORY_HARASSMENT",
-                                threshold: "BLOCK_MEDIUM_AND_ABOVE"
-                            },
-                            {
-                                category: "HARM_CATEGORY_HATE_SPEECH",
-                                threshold: "BLOCK_MEDIUM_AND_ABOVE"
-                            },
-                            {
-                                category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-                                threshold: "BLOCK_MEDIUM_AND_ABOVE"
-                            },
-                            {
-                                category: "HARM_CATEGORY_DANGEROUS_CONTENT",
-                                threshold: "BLOCK_MEDIUM_AND_ABOVE"
-                            }
-                        ]
-                    })
+                    // Déplacer l'indicateur actif sous l'onglet actuel
+                    const tabRect = this.getBoundingClientRect();
+                    activeIndicator.style.width = `${tabRect.width}px`;
+                    activeIndicator.style.left = `${tabRect.left}px`;
                 });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const data = await response.json();
-                console.log('API Response:', data);
-
-                if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0]) {
-                    const aiMessage = data.candidates[0].content.parts[0].text;
-                    addMessageToChat('ai', aiMessage);
-                    conversationHistory.push({ role: "model", parts: [{ text: aiMessage }] });
-                    speak(aiMessage);
-                } else {
-                    throw new Error('Unexpected response structure from API');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                errorMessage.textContent = `Erreur: ${error.message}. Veuillez vérifier la console pour plus de détails.`;
-            }
-        }
-
-        function addMessageToChat(sender, message) {
-            const messageElement = document.createElement('div');
-            messageElement.classList.add('chat-message');
-            messageElement.textContent = message;
-            
-            if (sender === 'user') {
-                messageElement.classList.add('user-message');
-            } else {
-                messageElement.classList.add('ai-message');
-            }
-            
-            chatContainer.appendChild(messageElement);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
-
-        // Speech Recognition
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        const recognition = new SpeechRecognition();
-        recognition.lang = 'fr-FR';
-
-        recognition.onresult = (event) => {
-            const transcript = event.results[0][0].transcript;
-            userInput.value = transcript;
-        };
-
-        speechToTextBtn.addEventListener('click', () => {
-            recognition.start();
-        });
-
-        // Text to Speech
-            function speak(text) {
-            if (!isMuted) {
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'fr-FR';
-                window.speechSynthesis.speak(utterance);
-            }
-        }
-
-        muteBtn.addEventListener('click', () => {
-            isMuted = !isMuted;
-            muteBtn.classList.toggle('active');
-            muteBtn.setAttribute('aria-label', isMuted ? 'Unmute' : 'Mute');
-        });
-
-        sendBtn.addEventListener('click', () => sendMessage());
-        userInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                sendMessage();
-            }
+            });
         });
     </script>
+
 </body>
 </html>
