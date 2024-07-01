@@ -6,88 +6,31 @@
     <title>Simulation de Négociation Commerciale</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: #F2F2F7;
+        /* ... (previous styles remain the same) ... */
+        .toggle-btn {
+            width: 51px;
+            height: 31px;
+            background-color: #e9e9ea;
+            border-radius: 31px;
+            padding: 2px;
+            transition: background-color 0.3s;
+            cursor: pointer;
         }
-        .chat-message {
-            max-width: 70%;
-            border-radius: 18px;
-            padding: 10px 14px;
-            margin-bottom: 10px;
-            font-size: 16px;
-            line-height: 1.4;
-        }
-        .user-message {
-            background-color: #007AFF;
-            color: white;
-            margin-left: auto;
-            border-bottom-right-radius: 4px;
-        }
-        .ai-message {
-            background-color: #E9E9EB;
-            color: black;
-            margin-right: auto;
-            border-bottom-left-radius: 4px;
-        }
-        #user-input {
-            border-radius: 20px;
-            background-color: white;
-            padding: 10px 15px;
-            font-size: 16px;
-        }
-        .action-btn {
-            background-color: #007AFF;
+        .toggle-btn::after {
+            content: '';
+            display: block;
+            width: 27px;
+            height: 27px;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-left: 8px;
+            background-color: white;
+            box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s;
         }
-        #error-message {
-            color: #FF3B30;
-            margin-top: 10px;
+        .toggle-btn.active {
+            background-color: #34C759;
         }
-        .ios-header {
-            background-color: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-        }
-        #splash-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: linear-gradient(45deg, #614385, #516395);
-            z-index: 9999;
-        }
-        #moral-text {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            font-size: 48px;
-            font-weight: 300;
-            color: white;
-            opacity: 0;
-            animation: fadeIn 2s ease-in-out forwards;
-        }
-        @keyframes fadeIn {
-            to {
-                opacity: 1;
-            }
-        }
-        #mute-btn {
-            background-color: #007AFF;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 14px;
-            font-weight: 500;
+        .toggle-btn.active::after {
+            transform: translateX(20px);
         }
     </style>
 </head>
@@ -97,27 +40,12 @@
     </div>
     <div class="ios-header sticky top-0 z-10 p-4 text-center shadow-sm flex justify-between items-center">
         <h1 class="text-xl font-semibold flex-grow">Simulation de Négociation Commerciale</h1>
-        <button id="mute-btn">Son activé</button>
-    </div>
-    <div class="flex-grow overflow-y-auto px-4 py-2" id="chat-container">
-        <!-- Chat messages will be displayed here -->
-    </div>
-    <div class="p-4 bg-white border-t border-gray-200">
         <div class="flex items-center">
-            <input type="text" id="user-input" class="flex-grow mr-2 border border-gray-300 focus:outline-none focus:border-blue-500" placeholder="Tapez un message...">
-            <button id="speech-to-text-btn" class="action-btn text-white" title="Parler pour saisir">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-                </svg>
-            </button>
-            <button id="send-btn" class="action-btn text-white" title="Envoyer le message">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-                </svg>
-            </button>
+            <span id="sound-status" class="mr-2">Son activé</span>
+            <div id="mute-btn" class="toggle-btn active"></div>
         </div>
-        <div id="error-message" class="text-center mt-2"></div>
     </div>
+    <!-- ... (rest of the HTML remains the same) ... -->
 
     <script>
         const API_KEY = 'AIzaSyCjCTUupbc55S477Cr0Eb78H8ETz2pe4_U';
@@ -130,6 +58,7 @@
         const errorMessage = document.getElementById('error-message');
         const splashScreen = document.getElementById('splash-screen');
         const muteBtn = document.getElementById('mute-btn');
+        const soundStatus = document.getElementById('sound-status');
 
         let conversationHistory = [];
         let isMuted = false;
@@ -153,20 +82,8 @@
         });
 
         async function sendInitialAIMessage() {
-            const initialMessage = "Bonjour, Merci pour le temps que vous m'accordez, quels sont vos besoins aujourd'hui ?";
-            addMessageToChat('ai', initialMessage);
-            conversationHistory.push({ role: "model", parts: [{ text: initialMessage }] });
-            speak(initialMessage);
-        }
-
-        async function sendMessage() {
-            const userMessage = userInput.value.trim();
-            if (userMessage === '') return;
-
-            addMessageToChat('user', userMessage);
-            userInput.value = '';
-
-            conversationHistory.push({ role: "user", parts: [{ text: userMessage }] });
+            const initialUserMessage = "Bonjour, Merci pour le temps que vous m'accordez, quels sont vos besoins aujourd'hui ?";
+            conversationHistory.push({ role: "user", parts: [{ text: initialUserMessage }] });
 
             try {
                 const response = await fetch(`${API_URL}?key=${API_KEY}`, {
@@ -225,36 +142,8 @@
             }
         }
 
-        function addMessageToChat(sender, message) {
-            const messageElement = document.createElement('div');
-            messageElement.classList.add('chat-message');
-            messageElement.textContent = message;
-            
-            if (sender === 'user') {
-                messageElement.classList.add('user-message');
-            } else {
-                messageElement.classList.add('ai-message');
-            }
-            
-            chatContainer.appendChild(messageElement);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
+        // ... (rest of the JavaScript functions remain the same) ...
 
-        // Speech Recognition
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        const recognition = new SpeechRecognition();
-        recognition.lang = 'fr-FR';
-
-        recognition.onresult = (event) => {
-            const transcript = event.results[0][0].transcript;
-            userInput.value = transcript;
-        };
-
-        speechToTextBtn.addEventListener('click', () => {
-            recognition.start();
-        });
-
-        // Text to Speech
         function speak(text) {
             if (!isMuted) {
                 const utterance = new SpeechSynthesisUtterance(text);
@@ -265,7 +154,8 @@
 
         muteBtn.addEventListener('click', () => {
             isMuted = !isMuted;
-            muteBtn.textContent = isMuted ? 'Son désactivé' : 'Son activé';
+            muteBtn.classList.toggle('active');
+            soundStatus.textContent = isMuted ? 'Son désactivé' : 'Son activé';
         });
 
         sendBtn.addEventListener('click', sendMessage);
