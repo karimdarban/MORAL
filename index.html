@@ -4,60 +4,62 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Moral</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        @import url(https://fonts.googleapis.com/css?family=Khula:700);
         body {
-            font-family: 'San Francisco', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: #FFFFFF; /* Fond blanc */
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #FFFFFF;
             margin: 0;
             padding: 0;
         }
         .chat-header {
-            background-color: #FFFFFF; /* Fond blanc */
-            color: #333333;
+            background-color: #FFFFFF;
+            color: #000000;
             padding: 16px;
             text-align: left;
-            font-size: 20px;
-            font-weight: bold;
+            font-size: 32px;
+            font-weight: 500;
             margin: 0;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
         .chat-header .menu-icon {
-            color: #333333;
+            color: #007AFF;
             font-size: 24px;
             cursor: pointer;
         }
         .tabs {
             display: flex;
-            justify-content: center; /* Centre les tabs */
-            margin-bottom: 16px;
-            position: relative;
-            background-color: #FFFFFF; /* Fond blanc */
+            justify-content: space-around;
+            background-color: #FFFFFF;
+            padding: 10px 0;
         }
         .tab {
-            padding: 12px 16px;
+            padding: 8px 16px;
             cursor: pointer;
-            font-weight: bold;
-            color: #333333;
-            transition: border-bottom-color 0.3s;
+            font-weight: 400;
+            color: #8E8E93;
+            transition: color 0.3s;
+            position: relative;
         }
         .tab.active {
-            border-bottom: 2px solid #007AFF;
+            color: #007AFF;
         }
-        .active-indicator {
+        .tab.active::after {
+            content: '';
             position: absolute;
-            bottom: 0;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
             height: 2px;
             background-color: #007AFF;
-            width: 0;
-            transition: width 0.3s ease-in-out, left 0.3s ease-in-out;
         }
         .chat-container {
             padding: 16px;
             overflow-y: auto;
-            height: calc(100vh - 132px); /* Ajustement pour header et footer */
+            height: calc(100vh - 132px);
         }
         .accordion-content {
             display: none;
@@ -66,30 +68,24 @@
             display: block;
         }
         .chat-footer {
-            background-color: #FFFFFF; /* Fond blanc */
+            background-color: #FFFFFF;
             text-align: center;
             padding: 12px;
-            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1); /* Ombre légère */
-        }
-        .chat-title {
-            font-size: 16px;
-            font-weight: bold;
-            margin: 16px 0 8px;
-            color: #333333;
+            color: #8E8E93;
+            font-size: 12px;
         }
         .chat-message {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             margin-bottom: 16px;
         }
         .message-content {
-            background-color: #FFFFFF;
+            background-color: #FAFAFA;
             padding: 12px;
-            border-radius: 1px;
-            box-shadow: 0 1px 0px rgba(0, 0, 0, 0.1); /* Ombre légère */
+            border-radius: 18px;
+            box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.1);
             flex-grow: 1;
             display: flex;
-            justify-content: flex-start; /* Aligne le contenu à gauche */
             align-items: center;
         }
         .avatar {
@@ -102,221 +98,119 @@
             align-items: center;
             font-size: 18px;
             color: #FFFFFF;
-            box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.7); /* Lueur */
         }
         .avatar i {
-            font-size: 24px;
+            font-size: 20px;
         }
         .message-title {
-            font-weight: bold;
-            color: #333333;
+            font-weight: 400;
+            color: #000000;
             margin-bottom: 4px;
         }
         .message-timestamp {
-            color: #999999;
+            color: #8E8E93;
             font-size: 12px;
-            margin-left: auto; /* Place le timestamp à droite */
+            margin-left: auto;
+            align-self: flex-end;
+        }
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #FFFFFF;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .console-container {
+            font-family: Khula, sans-serif;
+            font-size: 4em;
+            text-align: center;
+            height: 200px;
+            width: 600px;
+            display: block;
+            position: absolute;
+            color: #000000;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            margin: auto;
+        }
+        .console-underscore {
+            display: inline-block;
+            position: relative;
+            top: -0.14em;
+            left: 10px;
         }
     </style>
 </head>
 <body>
+    <div class="splash-screen">
+        <div class='console-container'><span id='text'></span><div class='console-underscore' id='console'>&#95;</div></div>
+    </div>
 
     <div class="chat-header">
         <div>Moral</div>
-        <div class="menu-icon"><i class="fas fa-bars"></i></div>
+        <div class="menu-icon"><i class="fas fa-ellipsis-h"></i></div>
     </div>
 
     <div class="tabs">
         <div class="tab active" data-tab="business-management">Business</div>
         <div class="tab" data-tab="engineering">Ingénierie</div>
         <div class="tab" data-tab="health">Santé</div>
-        <div class="active-indicator"></div>
     </div>
 
     <div class="chat-container">
-
-        <!-- Contenu de l'accordéon pour Business et Management -->
         <div class="accordion-content show" id="business-management">
             <div class="chat-message">
-                <a href="https://karimdarban.github.io/MORAL/Moral---Business-Negociation.html" target="_blank" rel="noopener noreferrer">
-    <div class="message-content" style="cursor: pointer;">
-        <div class="avatar" style="background-color: #a9c1a8;">
-            <i class="fas fa-handshake-alt"></i>
-        </div>
-        <div>
-            <div class="message-title">Négociation Commerciale</div>
-            <div class="message-timestamp">12:00</div>
-        </div>
-    </div>
-</a>
-
-
-                </div>
+                <a href="https://karimdarban.github.io/MORAL/Moral---Business-Negociation.html" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit; display: contents;">
+                    <div class="message-content">
+                        <div class="avatar" style="background-color: #E1EBFA;">
+                            <i class="fas fa-comments" style="color: #4A5567;"></i>
+                        </div>
+                        <div style="flex-grow: 1;">
+                            <div class="message-title">Négociation Commerciale</div>
+                        </div>
+                        <div class="message-timestamp">12:00</div>
+                    </div>
+                </a>
             </div>
             <div class="chat-message">
                 <div class="message-content">
-                    <div class="avatar" style="background-color: #cccaac;">
-                        <i class="fas fa-balance-scale"></i>
+                    <div class="avatar" style="background-color: #E3F1DF;">
+                        <i class="fas fa-balance-scale" style="color: #4A5567;"></i>
                     </div>
-                    <div>
+                    <div style="flex-grow: 1;">
                         <div class="message-title">General Argumentation (Soon)</div>
-                        <div class="message-timestamp">12:01</div>
                     </div>
+                    <div class="message-timestamp">12:01</div>
                 </div>
             </div>
             <div class="chat-message">
                 <div class="message-content">
-                    <div class="avatar" style="background-color: #c5ae96;">
-                        <i class="fas fa-envelope"></i>
+                    <div class="avatar" style="background-color: #F1E1FA;">
+                        <i class="fas fa-envelope" style="color: #4A5567;"></i>
                     </div>
-                    <div>
+                    <div style="flex-grow: 1;">
                         <div class="message-title">Business English for Email Writing (Soon)</div>
-                        <div class="message-timestamp">12:02</div>
                     </div>
+                    <div class="message-timestamp">12:02</div>
                 </div>
             </div>
-            <div class="chat-message">
-                <div class="message-content">
-                    <div class="avatar" style="background-color: #009aa6;">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <div>
-                        <div class="message-title">Business English for Formal Discussion (Soon)</div>
-                        <div class="message-timestamp">12:03</div>
-                    </div>
-                </div>
-            </div>
-            <div class="chat-message">
-                <div class="message-content">
-                    <div class="avatar" style="background-color: #BDBEC2;">
-                        <i class="fas fa-bullhorn"></i>
-                    </div>
-                    <div>
-                        <div class="message-title">Advertisement Agency (Soon)</div>
-                        <div class="message-timestamp">12:04</div>
-                    </div>
-                </div>
-            </div>
-            <div class="chat-message">
-                <div class="message-content">
-                    <div class="avatar" style="background-color: #00405D;">
-                        <i class="fas fa-search"></i>
-                    </div>
-                    <div>
-                        <div class="message-title">Consulting (Soon)</div>
-                        <div class="message-timestamp">12:05</div>
-                    </div>
-                </div>
-            </div>
-            <div class="chat-message">
-                <div class="message-content">
-                    <div class="avatar" style="background-color: #4089A6;">
-                        <i class="fas fa-user-tie"></i>
-                    </div>
-                    <div>
-                        <div class="message-title">Job Interview (Soon)</div>
-                        <div class="message-timestamp">12:06</div>
-                    </div>
-                </div>
-            </div>
-            <div class="chat-message">
-                <div class="message-content">
-                    <div class="avatar" style="background-color: #a9c1a8;">
-                        <i class="fas fa-handshake"></i>
-                    </div>
-                    <div>
-                        <div class="message-title">Conflict Management (Soon)</div>
-                        <div class="message-timestamp">12:07</div>
-                    </div>
-                </div>
-            </div>
+            <!-- Add more chat messages here with different colors from the new palette -->
         </div>
 
-        <!-- Contenu de l'accordéon pour Ingénierie -->
         <div class="accordion-content" id="engineering">
-            <div class="chat-message">
-                <div class="message-content">
-                    <div class="avatar" style="background-color: #cccaac;">
-                        <i class="fas fa-tools"></i>
-                    </div>
-                    <div>
-                        <div class="message-title">Customer Needs Analysis (Soon)</div>
-                        <div class="message-timestamp">12:08</div>
-                    </div>
-                </div>
-            </div>
-            <div class="chat-message">
-                <div class="message-content">
-                    <div class="avatar" style="background-color: #00405D;">
-                        <i class="fas fa-search"></i>
-                    </div>
-                    <div>
-                        <div class="message-title">Consulting (Soon)</div>
-                        <div class="message-timestamp">12:09</div>
-                    </div>
-                </div>
-            </div>
-            <div class="chat-message">
-                <div class="message-content">
-                    <div class="avatar" style="background-color: #4089A6;">
-                        <i class="fas fa-user-tie"></i>
-                    </div>
-                    <div>
-                        <div class="message-title">Job Interview (Soon)</div>
-                        <div class="message-timestamp">12:10</div>
-                    </div>
-                </div>
-            </div>
-            <div class="chat-message">
-                <div class="message-content">
-                    <div class="avatar" style="background-color: #c5ae96;">
-                        <i class="fas fa-envelope"></i>
-                    </div>
-                    <div>
-                        <div class="message-title">Business English for Email Writing (Soon)</div>
-                        <div class="message-timestamp">12:11</div>
-                    </div>
-                </div>
-            </div>
-            <div class="chat-message">
-                <div class="message-content">
-                    <div class="avatar" style="background-color: #009aa6;">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <div>
-                        <div class="message-title">Business English for Formal Discussion (Soon)</div>
-                        <div class="message-timestamp">12:12</div>
-                    </div>
-                </div>
-            </div>
+            <!-- Similar structure as business-management, with different icons and colors from the new palette -->
         </div>
 
-        <!-- Contenu de l'accordéon pour Santé -->
         <div class="accordion-content" id="health">
-            <div class="chat-message">
-                <div class="message-content">
-                    <div class="avatar" style="background-color: #BDBEC2;">
-                        <i class="fas fa-user-md"></i>
-                    </div>
-                    <div>
-                        <div class="message-title">Diagnostic Interrogation (Soon)</div>
-                        <div class="message-timestamp">12:13</div>
-                    </div>
-                </div>
-            </div>
-            <div class="chat-message">
-                <div class="message-content">
-                    <div class="avatar" style="background-color: #00405D;">
-                        <i class="fas fa-hospital-user"></i>
-                    </div>
-                    <div>
-                        <div class="message-title">Patient Education (Soon)</div>
-                        <div class="message-timestamp">12:14</div>
-                    </div>
-                </div>
-            </div>
+            <!-- Similar structure as business-management, with different icons and colors from the new palette -->
         </div>
-
     </div>
 
     <div class="chat-footer">
@@ -324,10 +218,64 @@
     </div>
 
     <script>
+        // Splash screen animation
+        consoleText(['Moral'], 'text', ['#000000']);
+
+        function consoleText(words, id, colors) {
+            if (colors === undefined) colors = ['#fff'];
+            var visible = true;
+            var con = document.getElementById('console');
+            var letterCount = 1;
+            var x = 1;
+            var waiting = false;
+            var target = document.getElementById(id);
+            target.setAttribute('style', 'color:' + colors[0])
+            window.setInterval(function() {
+                if (letterCount === 0 && waiting === false) {
+                    waiting = true;
+                    target.innerHTML = words[0].substring(0, letterCount)
+                    window.setTimeout(function() {
+                        var usedColor = colors.shift();
+                        colors.push(usedColor);
+                        var usedWord = words.shift();
+                        words.push(usedWord);
+                        x = 1;
+                        target.setAttribute('style', 'color:' + colors[0])
+                        letterCount += x;
+                        waiting = false;
+                    }, 1000)
+                } else if (letterCount === words[0].length + 1 && waiting === false) {
+                    waiting = true;
+                    window.setTimeout(function() {
+                        x = -1;
+                        letterCount += x;
+                        waiting = false;
+                    }, 1000)
+                } else if (waiting === false) {
+                    target.innerHTML = words[0].substring(0, letterCount)
+                    letterCount += x;
+                }
+            }, 120)
+            window.setInterval(function() {
+                if (visible === true) {
+                    con.className = 'console-underscore hidden'
+                    visible = false;
+                } else {
+                    con.className = 'console-underscore'
+                    visible = true;
+                }
+            }, 400)
+        }
+
+        // Hide splash screen after animation
+        setTimeout(function() {
+            document.querySelector('.splash-screen').style.display = 'none';
+        }, 3000);
+
+        // Tab switching logic
         document.addEventListener("DOMContentLoaded", function() {
             const tabs = document.querySelectorAll('.tab');
             const accordionContents = document.querySelectorAll('.accordion-content');
-            const activeIndicator = document.querySelector('.active-indicator');
 
             tabs.forEach(tab => {
                 tab.addEventListener('click', function() {
@@ -345,15 +293,9 @@
                             content.classList.remove('show');
                         }
                     });
-
-                    // Déplacer l'indicateur actif sous l'onglet actuel
-                    const tabRect = this.getBoundingClientRect();
-                    activeIndicator.style.width = `${tabRect.width}px`;
-                    activeIndicator.style.left = `${tabRect.left}px`;
                 });
             });
         });
     </script>
-
 </body>
 </html>
