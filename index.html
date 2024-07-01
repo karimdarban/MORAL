@@ -80,16 +80,14 @@
                 opacity: 1;
             }
         }
-        .listen-btn {
+        #mute-btn {
             background-color: #007AFF;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-left: 8px;
             color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 14px;
+            font-weight: 500;
         }
     </style>
 </head>
@@ -97,8 +95,9 @@
     <div id="splash-screen">
         <div id="moral-text">MORAL</div>
     </div>
-    <div class="ios-header sticky top-0 z-10 p-4 text-center shadow-sm">
-        <h1 class="text-xl font-semibold">Simulation de Négociation Commerciale</h1>
+    <div class="ios-header sticky top-0 z-10 p-4 text-center shadow-sm flex justify-between items-center">
+        <h1 class="text-xl font-semibold flex-grow">Simulation de Négociation Commerciale</h1>
+        <button id="mute-btn">Son activé</button>
     </div>
     <div class="flex-grow overflow-y-auto px-4 py-2" id="chat-container">
         <!-- Chat messages will be displayed here -->
@@ -130,10 +129,12 @@
         const speechToTextBtn = document.getElementById('speech-to-text-btn');
         const errorMessage = document.getElementById('error-message');
         const splashScreen = document.getElementById('splash-screen');
+        const muteBtn = document.getElementById('mute-btn');
 
         let conversationHistory = [];
+        let isMuted = false;
 
-        const systemPrompt = `Vous êtes un propriétaire d'entreprise marocain participant à une simulation de réunion d'affaires pour pratiquer les compétences de négociation avec des commerciaux. En tant qu'IA jouant le rôle d'un client professionnel, votre objectif est de créer un scénario stimulant où vous définissez le nom de votre entreprise, le secteur auquel elle appartient et le produit que vous cherchez à acheter en fonction du secteur et des besoins de votre entreprise. Votre but est de présenter des arguments logiques et solides contre le produit et son prix, toujours exprimés en dirhams. Tout au long de la conversation, il est crucial de rester dans le personnage et d'adopter un ton strict si le vendeur essaie de détourner la discussion ou d'introduire des sujets sans rapport, en lui rappelant qu'un tel comportement est inapproprié pour une réunion d'affaires et reflète mal sur son professionnalisme et l'entreprise qu'il représente. Dans votre premier message, fournissez le contexte de la simulation et plongez-vous dans le rôle sans révéler qu'il s'agit d'une simulation ou que vous êtes une IA. Évitez de vous définir comme une IA et découragez le vendeur de le faire aussi. Si le vendeur suggère des prix déraisonnablement bas ou des produits déraisonnables, soyez méfiant de son offre. Rappelez-vous, vous devez répondre comme si vous étiez dans une discussion verbale, pas écrite. N'incluez pas de messages de type e-mail avec des salutations, un corps, une clôture et une signature. Et essayez de favoriser des messages courts et pertinents. IMPORTANT: Répondez toujours en français, jamais en anglais. Commencez la conversation comme si "Bonjour" avait déjà été dit.`;
+        const systemPrompt = `Vous êtes un propriétaire d'entreprise marocain participant à une simulation de réunion d'affaires pour pratiquer les compétences de négociation avec des commerciaux. En tant qu'IA jouant le rôle d'un client professionnel, votre objectif est de créer un scénario stimulant où vous définissez le nom de votre entreprise, le secteur auquel elle appartient et le produit que vous cherchez à acheter en fonction du secteur et des besoins de votre entreprise. Votre but est de présenter des arguments logiques et solides contre le produit et son prix, toujours exprimés en dirhams. Tout au long de la conversation, il est crucial de rester dans le personnage et d'adopter un ton strict si le vendeur essaie de détourner la discussion ou d'introduire des sujets sans rapport, en lui rappelant qu'un tel comportement est inapproprié pour une réunion d'affaires et reflète mal sur son professionnalisme et l'entreprise qu'il représente. Dans votre premier message, fournissez le contexte de la simulation et plongez-vous dans le rôle sans révéler qu'il s'agit d'une simulation ou que vous êtes une IA. Évitez de vous définir comme une IA et découragez le vendeur de le faire aussi. Si le vendeur suggère des prix déraisonnablement bas ou des produits déraisonnables, soyez méfiant de son offre. Rappelez-vous, vous devez répondre comme si vous étiez dans une discussion verbale, pas écrite. N'incluez pas de messages de type e-mail avec des salutations, un corps, une clôture et une signature. Et essayez de favoriser des messages courts et pertinents. IMPORTANT: Répondez toujours en français, jamais en anglais.`;
 
         conversationHistory.push({ role: "user", parts: [{ text: systemPrompt }] });
 
@@ -152,60 +153,10 @@
         });
 
         async function sendInitialAIMessage() {
-            try {
-                const response = await fetch(`${API_URL}?key=${API_KEY}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        contents: conversationHistory,
-                        generationConfig: {
-                            temperature: 0.9,
-                            topK: 1,
-                            topP: 1,
-                            maxOutputTokens: 2048,
-                            stopSequences: []
-                        },
-                        safetySettings: [
-                            {
-                                category: "HARM_CATEGORY_HARASSMENT",
-                                threshold: "BLOCK_MEDIUM_AND_ABOVE"
-                            },
-                            {
-                                category: "HARM_CATEGORY_HATE_SPEECH",
-                                threshold: "BLOCK_MEDIUM_AND_ABOVE"
-                            },
-                            {
-                                category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-                                threshold: "BLOCK_MEDIUM_AND_ABOVE"
-                            },
-                            {
-                                category: "HARM_CATEGORY_DANGEROUS_CONTENT",
-                                threshold: "BLOCK_MEDIUM_AND_ABOVE"
-                            }
-                        ]
-                    })
-                });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const data = await response.json();
-                console.log('API Response:', data);
-
-                if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0]) {
-                    const aiMessage = data.candidates[0].content.parts[0].text;
-                    addMessageToChat('ai', aiMessage);
-                    conversationHistory.push({ role: "model", parts: [{ text: aiMessage }] });
-                } else {
-                    throw new Error('Unexpected response structure from API');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                errorMessage.textContent = `Erreur: ${error.message}. Veuillez vérifier la console pour plus de détails.`;
-            }
+            const initialMessage = "Bonjour, Merci pour le temps que vous m'accordez, quels sont vos besoins aujourd'hui ?";
+            addMessageToChat('ai', initialMessage);
+            conversationHistory.push({ role: "model", parts: [{ text: initialMessage }] });
+            speak(initialMessage);
         }
 
         async function sendMessage() {
@@ -264,6 +215,7 @@
                     const aiMessage = data.candidates[0].content.parts[0].text;
                     addMessageToChat('ai', aiMessage);
                     conversationHistory.push({ role: "model", parts: [{ text: aiMessage }] });
+                    speak(aiMessage);
                 } else {
                     throw new Error('Unexpected response structure from API');
                 }
@@ -276,28 +228,12 @@
         function addMessageToChat(sender, message) {
             const messageElement = document.createElement('div');
             messageElement.classList.add('chat-message');
+            messageElement.textContent = message;
             
             if (sender === 'user') {
                 messageElement.classList.add('user-message');
-                messageElement.textContent = message;
             } else {
                 messageElement.classList.add('ai-message');
-                messageElement.textContent = message;
-                
-                // Add listen button for AI messages
-                const listenBtn = document.createElement('button');
-                listenBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15.414a5 5 0 001.414 1.414m0 0l-2.828 2.828M8.414 8.414a5 5 0 00-1.414 1.414m0 0L4.172 7.172" /></svg>';
-                listenBtn.className = 'listen-btn ml-2';
-                listenBtn.onclick = () => speak(message);
-                
-                const container = document.createElement('div');
-                container.className = 'flex items-center';
-                container.appendChild(messageElement);
-                container.appendChild(listenBtn);
-                
-                chatContainer.appendChild(container);
-                chatContainer.scrollTop = chatContainer.scrollHeight;
-                return;
             }
             
             chatContainer.appendChild(messageElement);
@@ -320,10 +256,17 @@
 
         // Text to Speech
         function speak(text) {
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'fr-FR';
-            window.speechSynthesis.speak(utterance);
+            if (!isMuted) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'fr-FR';
+                window.speechSynthesis.speak(utterance);
+            }
         }
+
+        muteBtn.addEventListener('click', () => {
+            isMuted = !isMuted;
+            muteBtn.textContent = isMuted ? 'Son désactivé' : 'Son activé';
+        });
 
         sendBtn.addEventListener('click', sendMessage);
         userInput.addEventListener('keypress', (e) => {
