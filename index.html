@@ -417,7 +417,7 @@
             document.querySelector('.splash-screen').style.display = 'none';
         }, 3000);
 
-        // Tab switching logic
+ // Tab switching logic
         document.addEventListener("DOMContentLoaded", function() {
             const tabs = document.querySelectorAll('.tab');
             const accordionContents = document.querySelectorAll('.accordion-content');
@@ -439,6 +439,22 @@
                         }
                     });
                 });
+            });
+
+            // Menu icon click event
+            const menuIcon = document.getElementById('menuIcon');
+            const menuPopup = document.getElementById('menuPopup');
+
+            menuIcon.addEventListener('click', function(e) {
+                e.stopPropagation();
+                menuPopup.style.display = menuPopup.style.display === 'block' ? 'none' : 'block';
+            });
+
+            // Close menu when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!menuPopup.contains(e.target) && e.target !== menuIcon) {
+                    menuPopup.style.display = 'none';
+                }
             });
         });
     </script>
