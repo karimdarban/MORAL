@@ -20,50 +20,58 @@
             background-color: #FFFFFF;
             color: #000000;
             padding: 16px;
-            text-align: left;
-            font-size: 32px;
-            font-weight: 500;
+            text-align: center;
+            font-size: 17px;
+            font-weight: 600;
             margin: 0;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-shrink: 0;
+            border-bottom: 1px solid #E5E5EA;
         }
         .chat-header .back-icon {
             color: #007AFF;
-            font-size: 24px;
+            font-size: 20px;
             cursor: pointer;
         }
         .content-container {
-            padding: 16px;
+            padding: 24px 16px;
             flex-grow: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
+        .intro-text {
+            text-align: center;
+            margin-bottom: 24px;
+            color: #3A3A3C;
+            font-size: 17px;
+            line-height: 1.4;
+        }
         .contact-form {
             width: 100%;
             max-width: 500px;
-            background-color: #FAFAFA;
-            padding: 20px;
-            border-radius: 18px;
-            box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.1);
         }
         .form-group {
             margin-bottom: 20px;
         }
         .form-group label {
             display: block;
-            margin-bottom: 5px;
-            color: #000000;
+            margin-bottom: 8px;
+            color: #3A3A3C;
+            font-size: 15px;
+            font-weight: 500;
         }
         .form-group input,
         .form-group textarea {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #E0E0E0;
-            border-radius: 8px;
-            font-size: 16px;
+            padding: 12px;
+            border: 1px solid #E5E5EA;
+            border-radius: 10px;
+            font-size: 17px;
+            background-color: #FFFFFF;
+            color: #000000;
         }
         .form-group textarea {
             height: 150px;
@@ -73,18 +81,20 @@
             background-color: #007AFF;
             color: #FFFFFF;
             border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
-            font-size: 16px;
+            padding: 16px 20px;
+            border-radius: 10px;
+            font-size: 17px;
+            font-weight: 600;
             cursor: pointer;
             transition: background-color 0.3s;
+            width: 100%;
         }
         .submit-button:hover {
             background-color: #0056b3;
         }
         @media (max-width: 600px) {
             .chat-header {
-                font-size: 24px;
+                font-size: 17px;
                 padding: 12px;
             }
         }
@@ -92,12 +102,14 @@
 </head>
 <body>
     <div class="chat-header">
-        <div class="back-icon" onclick="window.history.back()"><i class="fas fa-arrow-left"></i></div>
-        <div>Nous contacter</div>
+        <div class="back-icon" onclick="window.history.back()"><i class="fas fa-chevron-left"></i></div>
+        <div>Moral</div>
         <div style="width: 24px;"></div>
     </div>
 
     <div class="content-container">
+        <h2>Nous contacter</h2>
+        <p class="intro-text">Nous sommes à votre écoute. N'hésitez pas à nous contacter pour toute question ou suggestion.</p>
         <form class="contact-form" id="contactForm">
             <div class="form-group">
                 <label for="name">Nom</label>
