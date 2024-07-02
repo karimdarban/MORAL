@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qui sommes-nous? - MORAL</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #FFFFFF;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            color: #333;
+        }
+        .header {
+            background-color: #ffffff;
+            color: #007AFF;
+            padding: 16px;
+            text-align: left;
+            font-size: 32px;
+            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .back-button {
+            color: #007AFF;
+            font-size: 24px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+        .back-button:hover {
+            transform: translateX(-5px);
+        }
+        .content {
+            padding: 0px;
+            flex-grow: 1;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.8;
+            background-color: #FFFFFF;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            margin-top: 40px;
+            margin-bottom: 40px;
+        }
+        h1 {
+            color: #007AFF;
+            font-size: 36px;
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+        }
+        h1::after {
+            content: '';
+            display: block;
+            width: 50px;
+            height: 4px;
+            background-color: #007AFF;
+            margin: 15px auto 0;
+        }
+        h2 {
+            color: #333;
+            font-size: 24px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            position: relative;
+            padding-left: 20px;
+        }
+        h2::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 10px;
+            height: 10px;
+            background-color: #007AFF;
+            border-radius: 50%;
+        }
+        p {
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+        .highlight {
+            background-color: #FCFCFC;
+            padding: 5px;
+            border-radius: 2px;
+            margin-bottom: 00px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 500;
+            color: #007AFF;
+            box-shadow: 0 2px 2px rgba(0,122,255,0.1);
+            transition: transform 0.3s ease;
+        }
+        .highlight:hover {
+            transform: scale(1.05);
+        }
+        .icon-section {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+        .icon-item {
+            text-align: center;
+            margin: 20px;
+            transition: transform 0.3s ease;
+        }
+        .icon-item:hover {
+            transform: translateY(-10px);
+        }
+        .icon-item i {
+            font-size: 48px;
+            color: #007AFF;
+            margin-bottom: 10px;
+        }
+        @media (max-width: 600px) {
+            .header {
+                font-size: 24px;
+                padding: 12px;
+            }
+            .content {
+                padding: 20px;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+            h1 {
+                font-size: 28px;
+            }
+            h2 {
+                font-size: 22px;
+            }
+            .highlight {
+                font-size: 20px;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="#" class="back-button"><i class="fas fa-arrow-left"></i></a>
+        <div>Moral</div>
+        <div style="width: 24px;"></div>
+    </div>
+
+    <div class="content">
+        <h1>Qui sommes-nous?</h1>
+
+        <div class="highlight">
+            <strong>Moral</strong> 
+            </br> Moroccan Oriented Responsive AI Learning
+        </div>
+
+        <p>MORAL est né d'une constatation simple : les compétences non techniques (soft skills) sont essentielles dans le monde professionnel, mais leur apprentissage dans le cadre universitaire traditionnel reste un défi.</p>
+
+        <h2>Le Problème</h2>
+        <p>Les soft skills ne s'acquièrent pas dans une salle de classe traditionnelle ou à travers des cours théoriques. Ces compétences s'apprennent par la pratique. Cependant, les contraintes de temps et d'encadrement dans le modèle universitaire classique rendent difficile cet apprentissage pratique.</p>
+
+        <h2>Notre Solution</h2>
+        <p>MORAL propose une approche innovante : un cadre où les étudiants peuvent développer leurs soft skills de manière pratique, à travers des simulations de situations réelles. Notre plateforme offre un environnement sûr et contrôlé pour expérimenter, apprendre et progresser.</p>
+
+        <div class="icon-section">
+            <div class="icon-item">
+                <i class="fas fa-users"></i>
+                <p>Apprentissage collaboratif</p>
+            </div>
+            <div class="icon-item">
+                <i class="fas fa-robot"></i>
+                <p>IA Responsive</p>
+            </div>
+            <div class="icon-item">
+                <i class="fas fa-graduation-cap"></i>
+                <p>Développement des compétences</p>
+            </div>
+        </div>
+
+        <h2>Notre Engagement</h2>
+        <p>Nous nous efforçons de rendre MORAL accessible gratuitement à tous. Pour atteindre cet objectif, nous comptons sur le soutien d'organismes publics et d'initiatives philanthropiques. Nous croyons fermement que l'éducation de qualité devrait être un droit, pas un privilège.</p>
+
+        <h2>Notre Vision</h2>
+        <p>En combinant technologie de pointe et pédagogie innovante, MORAL vise à combler le fossé entre l'éducation théorique et les compétences pratiques nécessaires dans le monde professionnel. Nous aspirons à former une génération de professionnels marocains compétents, confiants et prêts à relever les défis du 21e siècle.</p>
+    </div>
+
+    <script>
+        document.querySelectorAll('.icon-item').forEach(item => {
+            item.addEventListener('mouseenter', () => {
+                item.style.transform = 'translateY(-10px)';
+            });
+            item.addEventListener('mouseleave', () => {
+                item.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body>
+</html>
