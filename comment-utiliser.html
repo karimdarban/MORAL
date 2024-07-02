@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comment utiliser - MORAL</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #FFFFFF;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            color: #333;
+        }
+        .header {
+            background-color: #ffffff;
+            color: #000;
+            padding: 16px;
+            text-align: left;
+            font-size: 32px;
+            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .back-button {
+            color: #007AFF;
+            font-size: 24px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+        .back-button:hover {
+            transform: translateX(-5px);
+        }
+        .content {
+            padding: 0px;
+            flex-grow: 1;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.8;
+            background-color: #FFFFFF;
+            border-radius: 10px;
+            box-shadow: 0 0px 0px rgba(0,0,0,0.1);
+            margin-top: 0px;
+            margin-bottom: 0px;
+        }
+        h1 {
+            color: #007AFF;
+            font-size: 36px;
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+        }
+        h1::after {
+            content: '';
+            display: block;
+            width: 50px;
+            height: 4px;
+            background-color: #007AFF;
+            margin: 15px auto 0;
+        }
+        h2 {
+            color: #333;
+            font-size: 24px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            position: relative;
+            padding-left: 20px;
+        }
+        h2::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 10px;
+            height: 10px;
+            background-color: #007AFF;
+            border-radius: 50%;
+        }
+        p {
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+        .highlight {
+            background-color: #FCFCFC;
+            padding: 5px;
+            border-radius: 2px;
+            margin-bottom: 00px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 500;
+            color: #000;
+            box-shadow: 0 2px 2px rgba(0,122,255,0.1);
+            transition: transform 0.3s ease;
+        }
+        .highlight:hover {
+            transform: scale(1.05);
+        }
+        .step-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 40px;
+        }
+        .step-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            width: 100%;
+            max-width: 600px;
+        }
+        .step-number {
+            background-color: #007AFF;
+            color: #FFFFFF;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            margin-right: 20px;
+            flex-shrink: 0;
+        }
+        .step-content {
+            flex-grow: 1;
+        }
+        .step-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        @media (max-width: 600px) {
+            .header {
+                font-size: 24px;
+                padding: 12px;
+            }
+            .content {
+                padding: 20px;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+            h1 {
+                font-size: 28px;
+            }
+            h2 {
+                font-size: 22px;
+            }
+            .highlight {
+                font-size: 20px;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="https://karimdarban.github.io/MORAL/" class="back-button"><i class="fas fa-arrow-left"></i></a>
+        <div>Moral</div>
+        <div style="width: 24px;"></div>
+    </div>
+
+    <div class="content">
+        <h1>Comment utiliser</h1>
+        
+        <center>
+            <p>Suivez ces étapes simples pour tirer le meilleur parti de votre expérience MORAL et développer vos softskills.</p>
+        </center>
+
+        <div class="step-section">
+            <div class="step-item">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <div class="step-title">Choisissez votre domaine</div>
+                    <p>Sélectionnez le domaine qui vous intéresse : Business, Ingénierie ou Santé.</p>
+                </div>
+            </div>
+
+            <div class="step-item">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <div class="step-title">Sélectionnez une compétence</div>
+                    <p>Choisissez la compétence spécifique que vous souhaitez développer, comme la négociation commerciale ou la rédaction d'e-mails professionnels.</p>
+                </div>
+            </div>
+
+            <div class="step-item">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <div class="step-title">Participez à la simulation</div>
+                    <p>Engagez-vous dans des scénarios réalistes conçus pour mettre en pratique vos compétences.</p>
+                </div>
+            </div>
+
+            <div class="step-item">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <div class="step-title">Pratiquez et progressez</div>
+                    <p>Répétez les simulations pour améliorer vos compétences et suivez vos progrès au fil du temps.</p>
+                </div>
+            </div>
+        </div>
+
+        <h2>Conseils pour une utilisation optimale</h2>
+        <p>
+            - Soyez ouvert et honnête dans vos interactions.<br>
+            - N'hésitez pas à expérimenter différentes approches.<br>
+            - Réfléchissez à votre performance après chaque session.<br>
+            - Utilisez MORAL régulièrement pour un développement continu.
+        </p>
+
+   </div>
+
+    <script>
+        document.querySelectorAll('.step-item').forEach(item => {
+            item.addEventListener('mouseenter', () => {
+                item.style.transform = 'scale(1.05)';
+            });
+            item.addEventListener('mouseleave', () => {
+                item.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body>
+</html>
