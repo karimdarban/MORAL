@@ -1,0 +1,351 @@
+Certainement. Je vais créer un code adapté pour simuler des situations de "gestion de conflits" en entreprise, en utilisant la même interface utilisateur et la structure générale du code que vous avez fourni. Je vais principalement modifier le prompt système pour refléter ce nouveau scénario.
+
+Voici le code modifié :
+
+
+
+```html
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Simulation de Gestion de Conflits</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #F2F2F7;
+        }
+        .chat-message {
+            max-width: 70%;
+            border-radius: 18px;
+            padding: 10px 14px;
+            margin-bottom: 10px;
+            font-size: 16px;
+            line-height: 1.4;
+        }
+        .user-message {
+            background-color: #007AFF;
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+        .ai-message {
+            background-color: #E9E9EB;
+            color: black;
+            margin-right: auto;
+            border-bottom-left-radius: 4px;
+        }
+        #user-input {
+            border-radius: 20px;
+            background-color: white;
+            padding: 10px 15px;
+            font-size: 16px;
+        }
+        .action-btn {
+            background-color: #007AFF;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 8px;
+        }
+        #error-message {
+            color: #FF3B30;
+            margin-top: 10px;
+        }
+        .ios-header {
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(45deg, #ffffff, #ffffff);
+            z-index: 9999;
+        }
+        #moral-text {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-size: 48px;
+            font-weight: 300;
+            color: #000000;
+            opacity: 0;
+            animation: fadeIn 2s ease-in-out forwards;
+        }
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+        .toggle-btn {
+            background-color: #E9E9EB;
+            border-radius: 16px;
+            width: 51px;
+            height: 31px;
+            position: relative;
+            transition: background-color 0.3s;
+        }
+        .toggle-btn::before {
+            content: '';
+            position: absolute;
+            width: 27px;
+            height: 27px;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            background-color: white;
+            transition: transform 0.3s;
+        }
+        .toggle-btn.active {
+            background-color: #34C759;
+        }
+        .toggle-btn.active::before {
+            transform: translateX(20px);
+        }
+    </style>
+</head>
+<body class="h-screen flex flex-col">
+    <div id="splash-screen">
+        <div id="moral-text">Gestion de Conflits</div>
+    </div>
+    <div class="ios-header sticky top-0 z-10 p-4 text-center shadow-sm flex justify-between items-center">
+        <h1 class="text-xl font-semibold flex-grow">Simulation de Gestion de Conflits</h1>
+        <div class="flex items-center">
+            <span class="mr-2 text-sm">Son</span>
+            <button id="mute-btn" class="toggle-btn active" aria-label="Mute/Unmute"></button>
+        </div>
+    </div>
+    <div class="flex-grow overflow-y-auto px-4 py-2" id="chat-container">
+        <!-- Chat messages will be displayed here -->
+    </div>
+    <div class="p-4 bg-white border-t border-gray-200">
+        <div class="flex items-center">
+            <input type="text" id="user-input" class="flex-grow mr-2 border border-gray-300 focus:outline-none focus:border-blue-500" placeholder="Tapez un message...">
+            <button id="speech-to-text-btn" class="action-btn text-white" title="Parler pour saisir">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                </svg>
+            </button>
+            <button id="send-btn" class="action-btn text-white" title="Envoyer le message">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                </svg>
+            </button>
+        </div>
+        <div id="error-message" class="text-center mt-2"></div>
+    </div>
+
+    <script>
+        const API_KEY = 'AIzaSyCjCTUupbc55S477Cr0Eb78H8ETz2pe4_U';
+        const API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
+
+        const chatContainer = document.getElementById('chat-container');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+        const speechToTextBtn = document.getElementById('speech-to-text-btn');
+        const errorMessage = document.getElementById('error-message');
+        const splashScreen = document.getElementById('splash-screen');
+        const muteBtn = document.getElementById('mute-btn');
+
+        let conversationHistory = [];
+        let isMuted = false;
+
+        const systemPrompt = `Vous êtes un médiateur professionnel participant à une simulation de gestion de conflits en entreprise pour former des étudiants ou des professionnels aux techniques de résolution de conflits. En tant qu'IA jouant le rôle d'un médiateur expérimenté, votre tâche est de :
+
+1. Créer un scénario de conflit réaliste et détaillé :
+   - Choisissez un nom spécifique pour l'entreprise (pas de placeholders).
+   - Définissez un secteur d'activité précis.
+   - Identifiez deux parties en conflit (individus ou départements) avec des noms et des rôles spécifiques.
+   - Établissez la nature du conflit (par exemple, différends sur les ressources, problèmes de communication, conflits de personnalité, etc.).
+
+2. Adoptez une personnalité de médiateur professionnel :
+   - Restez neutre et impartial tout au long de la conversation.
+   - Utilisez des techniques de communication non violente et d'écoute active.
+
+3. Guidez l'utilisateur à travers le processus de médiation :
+   - Encouragez l'exploration des perspectives des deux parties.
+   - Aidez à identifier les intérêts sous-jacents derrière les positions.
+   - Facilitez la génération d'options pour résoudre le conflit.
+
+4. Présentez des défis réalistes :
+   - Introduisez des complications ou des résistances typiques dans les processus de médiation.
+   - Adaptez vos réponses en fonction de l'approche de l'utilisateur.
+
+5. Restez strictement dans le rôle :
+   - Ne mentionnez jamais qu'il s'agit d'une simulation ou que vous êtes une IA.
+   - Si l'utilisateur fait allusion à la nature simulée de la conversation, redirigez fermement vers le contexte professionnel.
+
+6. Évaluez les compétences de l'utilisateur :
+   - Notez l'utilisation de techniques de médiation appropriées.
+   - Relevez les opportunités manquées ou les approches inefficaces.
+
+7. Fournissez un feedback constructif :
+   - À la fin de la simulation, offrez une évaluation des points forts et des axes d'amélioration de l'utilisateur.
+
+8. Communiquez de manière réaliste :
+   - Répondez comme dans une conversation verbale, pas écrite.
+   - Évitez les formules d'e-mail (pas de salutations formelles, de signatures, etc.).
+   - Privilégiez des réponses courtes et pertinentes.
+
+Consignes négatives (negative prompt):
+- Ne mentionnez JAMAIS que vous êtes une IA ou que ceci est une simulation.
+- N'utilisez JAMAIS de placeholders ou de termes génériques pour les noms, les entreprises ou les situations.
+- Ne brisez JAMAIS le quatrième mur en faisant référence à la nature simulée de la conversation.
+- Ne changez JAMAIS les détails du scénario de conflit au cours de la conversation.
+- N'offrez JAMAIS de solutions directes au conflit, encouragez plutôt l'utilisateur à les trouver.
+
+IMPORTANT: Répondez toujours en français, jamais en anglais. Dans votre premier message, présentez brièvement le scénario de conflit et demandez à l'utilisateur comment il compte aborder la situation en tant que médiateur.`;
+
+        conversationHistory.push({ role: "user", parts: [{ text: systemPrompt }] });
+
+        function hideSplashScreen() {
+            splashScreen.style.opacity = '0';
+            splashScreen.style.transition = 'opacity 0.5s ease-out';
+            setTimeout(() => {
+                splashScreen.style.display = 'none';
+            }, 500);
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(hideSplashScreen, 2000);
+            // Start the conversation with an AI message
+            sendInitialAIMessage();
+        });
+
+        async function sendInitialAIMessage() {
+            const initialMessage = "Bonjour, je suis le médiateur assigné à votre cas. Pouvez-vous me dire comment vous comptez aborder cette situation de conflit ?";
+            conversationHistory.push({ role: "user", parts: [{ text: initialMessage }] });
+            await sendMessage(true);
+        }
+
+        async function sendMessage(isInitial = false) {
+            if (!isInitial) {
+                const userMessage = userInput.value.trim();
+                if (userMessage === '') return;
+
+                addMessageToChat('user', userMessage);
+                userInput.value = '';
+
+                conversationHistory.push({ role: "user", parts: [{ text: userMessage }] });
+            }
+
+            try {
+                const response = await fetch(`${API_URL}?key=${API_KEY}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        contents: conversationHistory,
+                        generationConfig: {
+                            temperature: 0.9,
+                            topK: 1,
+                            topP: 1,
+                            maxOutputTokens: 2048,
+                            stopSequences: []
+                        },
+                        safetySettings: [
+                            {
+                                category: "HARM_CATEGORY_HARASSMENT",
+                                threshold: "BLOCK_MEDIUM_AND_ABOVE"
+                            },
+                            {
+                                category: "HARM_CATEGORY_HATE_SPEECH",
+                                threshold: "BLOCK_MEDIUM_AND_ABOVE"
+                            },
+                            {
+                                category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+                                threshold: "BLOCK_MEDIUM_AND_ABOVE"
+                            },
+                            {
+                                category: "HARM_CATEGORY_DANGEROUS_CONTENT",
+                                threshold: "BLOCK_MEDIUM_AND_ABOVE"
+                            }
+                        ]
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('API Response:', data);
+
+                if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0]) {
+                    const aiMessage = data.candidates[0].content.parts[0].text;
+                    addMessageToChat('ai', aiMessage);
+                    conversationHistory.push({ role: "model", parts: [{ text: aiMessage }] });
+                    speak(aiMessage);
+                } else {
+                    throw new Error('Unexpected response structure from API');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                errorMessage.textContent = `Erreur: ${error.message}. Veuillez vérifier la console pour plus de détails.`;
+            }
+        }
+
+        function addMessageToChat(sender, message) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('chat-message');
+            messageElement.textContent = message;
+            
+            if (sender === 'user') {
+                messageElement.classList.add('user-message');
+            } else {
+                messageElement.classList.add('ai-message');
+            }
+            
+            chatContainer.appendChild(messageElement);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // Speech Recognition
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'fr-FR';
+
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            userInput.value = transcript;
+        };
+
+        speechToTextBtn.addEventListener('click', () => {
+            recognition.start();
+        });
+
+        // Text to Speech
+        function speak(text) {
+            if (!isMuted) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'fr-FR';
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        muteBtn.addEventListener('click', () => {
+            isMuted = !isMuted;
+            muteBtn.classList.toggle('active');
+            muteBtn.setAttribute('aria-label', isMuted ? 'Unmute' : 'Mute');
+        });
+
+        sendBtn.addEventListener('click', () => sendMessage());
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
