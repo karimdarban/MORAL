@@ -1,10 +1,3 @@
-Certainement. Je vais créer un code adapté pour simuler des situations de "gestion de conflits" en entreprise, en utilisant la même interface utilisateur et la structure générale du code que vous avez fourni. Je vais principalement modifier le prompt système pour refléter ce nouveau scénario.
-
-Voici le code modifié :
-
-
-
-```html
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -34,6 +27,18 @@ Voici le code modifié :
         .ai-message {
             background-color: #E9E9EB;
             color: black;
+            margin-right: auto;
+            border-bottom-left-radius: 4px;
+        }
+        .employee1-message {
+            background-color: #FF9500;
+            color: white;
+            margin-right: auto;
+            border-bottom-left-radius: 4px;
+        }
+        .employee2-message {
+            background-color: #5856D6;
+            color: white;
             margin-right: auto;
             border-bottom-left-radius: 4px;
         }
@@ -159,52 +164,49 @@ Voici le code modifié :
 
         let conversationHistory = [];
         let isMuted = false;
+        let currentSpeaker = 'employee1';
 
-        const systemPrompt = `Vous êtes un médiateur professionnel participant à une simulation de gestion de conflits en entreprise pour former des étudiants ou des professionnels aux techniques de résolution de conflits. En tant qu'IA jouant le rôle d'un médiateur expérimenté, votre tâche est de :
+        const systemPrompt = `Vous êtes une IA simulant deux employés en conflit dans une entreprise. L'utilisateur joue le rôle de leur manager, chargé de résoudre le conflit. Votre tâche est de :
 
 1. Créer un scénario de conflit réaliste et détaillé :
    - Choisissez un nom spécifique pour l'entreprise (pas de placeholders).
    - Définissez un secteur d'activité précis.
-   - Identifiez deux parties en conflit (individus ou départements) avec des noms et des rôles spécifiques.
+   - Créez deux personnages (employés) avec des noms, des rôles et des personnalités distincts.
    - Établissez la nature du conflit (par exemple, différends sur les ressources, problèmes de communication, conflits de personnalité, etc.).
 
-2. Adoptez une personnalité de médiateur professionnel :
-   - Restez neutre et impartial tout au long de la conversation.
-   - Utilisez des techniques de communication non violente et d'écoute active.
+2. Jouer alternativement le rôle des deux employés :
+   - Commencez par le premier employé qui expose sa version des faits.
+   - Puis alternez entre les deux employés pour donner leurs points de vue respectifs.
+   - Adaptez vos réponses en fonction des interventions du manager (l'utilisateur).
 
-3. Guidez l'utilisateur à travers le processus de médiation :
-   - Encouragez l'exploration des perspectives des deux parties.
-   - Aidez à identifier les intérêts sous-jacents derrière les positions.
-   - Facilitez la génération d'options pour résoudre le conflit.
+3. Présentez des perspectives et des émotions réalistes :
+   - Exprimez les frustrations, les inquiétudes et les attentes de chaque employé.
+   - Montrez comment le conflit affecte leur travail et leur bien-être.
 
-4. Présentez des défis réalistes :
-   - Introduisez des complications ou des résistances typiques dans les processus de médiation.
-   - Adaptez vos réponses en fonction de l'approche de l'utilisateur.
+4. Réagissez de manière réaliste aux tentatives de médiation du manager :
+   - Montrez de la résistance ou de l'ouverture selon la personnalité de l'employé et l'approche du manager.
+   - Évoluez progressivement vers une résolution si le manager gère bien la situation.
 
 5. Restez strictement dans le rôle :
    - Ne mentionnez jamais qu'il s'agit d'une simulation ou que vous êtes une IA.
-   - Si l'utilisateur fait allusion à la nature simulée de la conversation, redirigez fermement vers le contexte professionnel.
+   - Si l'utilisateur fait allusion à la nature simulée de la conversation, ignorez-le et continuez à jouer le rôle des employés.
 
-6. Évaluez les compétences de l'utilisateur :
-   - Notez l'utilisation de techniques de médiation appropriées.
-   - Relevez les opportunités manquées ou les approches inefficaces.
+6. Fournissez des opportunités d'apprentissage pour le manager :
+   - Créez des situations qui testent les compétences de gestion de conflits du manager.
+   - Réagissez positivement aux bonnes pratiques de gestion et négativement aux mauvaises.
 
-7. Fournissez un feedback constructif :
-   - À la fin de la simulation, offrez une évaluation des points forts et des axes d'amélioration de l'utilisateur.
-
-8. Communiquez de manière réaliste :
-   - Répondez comme dans une conversation verbale, pas écrite.
-   - Évitez les formules d'e-mail (pas de salutations formelles, de signatures, etc.).
-   - Privilégiez des réponses courtes et pertinentes.
+7. Communiquez de manière réaliste :
+   - Utilisez un langage naturel et des expressions propres à chaque personnage.
+   - Évitez les formules d'e-mail ou de rapport formel.
 
 Consignes négatives (negative prompt):
 - Ne mentionnez JAMAIS que vous êtes une IA ou que ceci est une simulation.
 - N'utilisez JAMAIS de placeholders ou de termes génériques pour les noms, les entreprises ou les situations.
 - Ne brisez JAMAIS le quatrième mur en faisant référence à la nature simulée de la conversation.
-- Ne changez JAMAIS les détails du scénario de conflit au cours de la conversation.
-- N'offrez JAMAIS de solutions directes au conflit, encouragez plutôt l'utilisateur à les trouver.
+- Ne changez JAMAIS les détails du scénario de conflit ou les personnalités des employés au cours de la conversation.
+- N'offrez JAMAIS de solutions directes au conflit, laissez le manager (l'utilisateur) gérer la situation.
 
-IMPORTANT: Répondez toujours en français, jamais en anglais. Dans votre premier message, présentez brièvement le scénario de conflit et demandez à l'utilisateur comment il compte aborder la situation en tant que médiateur.`;
+IMPORTANT: Répondez toujours en français, jamais en anglais. Dans votre premier message, faites parler le premier employé qui expose sa version des faits et son mécontentement à son manager (l'utilisateur).`;
 
         conversationHistory.push({ role: "user", parts: [{ text: systemPrompt }] });
 
@@ -223,8 +225,6 @@ IMPORTANT: Répondez toujours en français, jamais en anglais. Dans votre premie
         });
 
         async function sendInitialAIMessage() {
-            const initialMessage = "Bonjour, je suis le médiateur assigné à votre cas. Pouvez-vous me dire comment vous comptez aborder cette situation de conflit ?";
-            conversationHistory.push({ role: "user", parts: [{ text: initialMessage }] });
             await sendMessage(true);
         }
 
@@ -284,9 +284,12 @@ IMPORTANT: Répondez toujours en français, jamais en anglais. Dans votre premie
 
                 if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0]) {
                     const aiMessage = data.candidates[0].content.parts[0].text;
-                    addMessageToChat('ai', aiMessage);
+                    addMessageToChat(currentSpeaker, aiMessage);
                     conversationHistory.push({ role: "model", parts: [{ text: aiMessage }] });
                     speak(aiMessage);
+                    
+                    // Switch speaker for next message
+                    currentSpeaker = currentSpeaker === 'employee1' ? 'employee2' : 'employee1';
                 } else {
                     throw new Error('Unexpected response structure from API');
                 }
@@ -301,12 +304,19 @@ IMPORTANT: Répondez toujours en français, jamais en anglais. Dans votre premie
             messageElement.classList.add('chat-message');
             messageElement.textContent = message;
             
-            if (sender === 'user') {
-                messageElement.classList.add('user-message');
-            } else {
-                messageElement.classList.add('ai-message');
+            switch(sender) {
+                case 'user':
+                    messageElement.classList.add('user-message');
+                    break;
+                case 'employee1':
+                    messageElement.classList.add('employee1-message');
+                    break;
+                case 'employee2':
+                    messageElement.classList.add('employee2-message');
+                    break;
+                default:
+                    messageElement.classList.add('ai-message');
             }
-            
             chatContainer.appendChild(messageElement);
             chatContainer.scrollTop = chatContainer.scrollHeight;
         }
